@@ -20,5 +20,10 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-highlightjs")],
+  safelist: [
+    {
+      pattern: /hljs+/,
+    },
+  ],
 };

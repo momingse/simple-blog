@@ -6,4 +6,5 @@ export default defineConfig({
   build: {
     minify: false,
   },
+  assetsInclude: ["**/*.md"],
 });

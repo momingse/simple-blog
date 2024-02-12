@@ -10,7 +10,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
   return (
     <div className="relative">
       <AppHeader />
-      {children}
+      <div className="py-9 px-6 overflow-x-hidden">{children}</div>
       <ReturnToTopButton className="fixed bottom-6 right-6" />
     </div>
   );
