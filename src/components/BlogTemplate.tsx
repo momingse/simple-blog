@@ -13,7 +13,7 @@ export default function BlogTemplate({ html }) {
   return (
     <div className="w-full">
       <div
-        className="w-[666px] m-auto"
+        className="max-w-[666px] m-auto"
         id="blog"
         dangerouslySetInnerHTML={{ __html: html }}
       />

@@ -1,31 +1,41 @@
+import { Folder, Github, Linkedin, NotepadText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { routes } from "../App";
+import useBreakpoint from "../util/hook/useBreakpoint";
 import IconLink from "./IconLink";
-import { Github, Linkedin } from "lucide-react";
+import Home from "../pages/Home";
+
+const routesIconMapping: Readonly<{ [key: string]: JSX.Element }> =
+  Object.freeze({
+    Blog: <NotepadText />,
+    Project: <Folder />,
+  });
 
 const AppHeader = () => {
+  const isMobile = !useBreakpoint().md;
+
   return (
     <nav className="flex justify-between py-3 px-7 text-[#9BA4B5]">
-      <Link className="hover:text-zinc-900" to={"/"}>
-        Momingse
-      </Link>
+      <Link to={"/"}>Momingse</Link>
       <ul className="flex gap-4">
         {routes.map(({ name, path }) => {
+          if (isMobile) {
+            if (!Object.prototype.hasOwnProperty.call(routesIconMapping, name))
+              return null;
+            return (
+              <li key={path}>
+                <Link to={path}>{routesIconMapping[name]}</Link>
+              </li>
+            );
+          }
           return (
             <li key={path}>
-              <Link className="hover:text-zinc-900" to={path}>
-                {name}
-              </Link>
+              <Link to={path}>{name}</Link>
             </li>
           );
         })}
+        <IconLink path="https://github.com/momingse" icon={<Github />} />
         <IconLink
-          className="hover:text-zinc-900"
-          path="https://github.com/momingse"
-          icon={<Github />}
-        />
-        <IconLink
-          className="hover:text-zinc-900"
           path="https://www.linkedin.com/in/wang-hin-chow-5ab517271/"
           icon={<Linkedin />}
         />

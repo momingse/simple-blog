@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useReducer, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import useForceUpdate from "./useForceUpdate";
 
 type CheckFunc = () => boolean;
 type UseEventListener = (
@@ -52,11 +53,6 @@ const useEventListener: UseEventListener = (type, checkFunc) => {
   }, []);
 
   return returnRef.current;
-};
-
-const useForceUpdate = () => {
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
-  return forceUpdate;
 };
 
 export default useEventListener;
