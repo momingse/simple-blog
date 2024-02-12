@@ -1,12 +1,12 @@
 import { Route, Routes } from "react-router-dom";
-import AppLayout from "./compents/AppLayout";
-import BlogTemplate from "./compents/BlogTemplate";
+import AppLayout from "./components/AppLayout";
+import BlogTemplate from "./components/BlogTemplate";
 import { marked } from "marked";
 
 type RouteInfo = {
   name: string;
   path: string;
-  component: any;
+  component: JSX.Element;
 };
 
 const PagePathsWithComponents = import.meta.glob("./pages/*.tsx", {
@@ -34,7 +34,7 @@ const blogsRoutes = blogsInHTML.map((blogInHTML) => {
   } as RouteInfo;
 });
 
-const routesOrder = Object.freeze({
+const routesOrder: Readonly<{ [key: string]: number }> = Object.freeze({
   Blog: 1,
   Home: 0,
 });
@@ -45,12 +45,16 @@ export const routes = Object.keys(PagePathsWithComponents)
     return {
       name,
       path: name === "Home" ? "/" : `/${name.toLowerCase()}`,
-      component: PagePathsWithComponents[path].default,
+      component: PagePathsWithComponents[path].default(),
     } as RouteInfo;
   })
   .sort((a, b) => {
-    const aP = routesOrder.hasOwnProperty(a.name) ? routesOrder[a.name] : 100;
-    const bP = routesOrder.hasOwnProperty(b.name) ? routesOrder[b.name] : 100;
+    const aP = Object.prototype.hasOwnProperty.call(routesOrder, a.name)
+      ? routesOrder[a.name]
+      : 100;
+    const bP = Object.prototype.hasOwnProperty.call(routesOrder, b.name)
+      ? routesOrder[b.name]
+      : 100;
     return aP - bP;
   });
 
@@ -59,7 +63,7 @@ export function App() {
     <AppLayout>
       <Routes>
         {routes.map(({ path, component: RouteComp }) => {
-          return <Route key={path} path={path} element={<RouteComp />} />;
+          return <Route key={path} path={path} element={RouteComp} />;
         })}
         {blogsRoutes.map(({ path, component: RouteComp }) => {
           return <Route key={path} path={path} element={RouteComp} />;
