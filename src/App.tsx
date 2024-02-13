@@ -13,24 +13,37 @@ const PagePathsWithComponents = import.meta.glob("./pages/*.tsx", {
   eager: true,
 });
 
-// ts-expect-error
 const blogsInMD = import.meta.glob("./blogs/*.md", {
   eager: true,
   query: "?raw",
 });
 
-const blogsInHTML = Object.entries(blogsInMD).map(([key, value]) => {
+export const blogsInfo = Object.entries(blogsInMD).map(([key, value]) => {
+  const regex =
+    /^---\s*\r?\ndate: (\d{2}\/\d{2}\/\d{4})\r?\ntopics: ([^\r\n]+)\s*\r?\n---$/m;
+  const match = regex.exec(value.default);
+  const date = match?.at(1) || "";
+  const topics = match?.at(2)?.split(" ") || [];
+  const name = key.match(/\.\/blogs\/(.*)\.md$/)![1];
+  let html = "";
+  if (match) {
+    html = marked(value.default.replace(match?.at(0), ""));
+  } else {
+    html = marked(value.default);
+  }
   return {
-    path: key,
-    html: marked(value.default),
+    date,
+    topics,
+    name,
+    html,
   };
 });
-const blogsRoutes = blogsInHTML.map((blogInHTML) => {
-  const name = blogInHTML.path.match(/\.\/blogs\/(.*)\.md$/)![1];
+
+const blogsRoutes = blogsInfo.map(({ name, html }) => {
   return {
-    name: name,
+    name,
     path: `/blog/${name}`,
-    component: <BlogTemplate html={blogInHTML.html} />,
+    component: <BlogTemplate html={html} />,
   } as RouteInfo;
 });
 
