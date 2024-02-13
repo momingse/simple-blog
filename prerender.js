@@ -16,9 +16,26 @@ const routesToPrerender = fs
     return name === "home" ? `/` : `/${name}`;
   });
 
+const blogsToPrereneder = fs
+  .readdirSync(toAbsolute("src/blogs"))
+  .map((file) => {
+    return "/blog/" + encodeURI(file.replace(/\.md$/, ""));
+  });
+
 (async () => {
   // pre-render each route...
   for (const url of routesToPrerender) {
+    const appHtml = render(url);
+
+    const html = template.replace(`<!--app-html-->`, appHtml);
+
+    const filePath = `dist/static${url === "/" ? "/index" : url}.html`;
+    fs.writeFileSync(toAbsolute(filePath), html);
+    console.log("pre-rendered:", filePath);
+  }
+
+  fs.mkdirSync(toAbsolute("dist/static/blog", { recursive: true }));
+  for (const url of blogsToPrereneder) {
     const appHtml = render(url);
 
     const html = template.replace(`<!--app-html-->`, appHtml);
