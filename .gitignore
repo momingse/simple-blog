@@ -1,3 +1,4 @@
 /dist
 /node_modules
 /src/blogs/**.*
+!/src/blogs/Example.md

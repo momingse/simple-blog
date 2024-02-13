@@ -1,4 +1,6 @@
 {
+  "name": "simple-blog",
+  "author": "momingse",
   "type": "module",
   "scripts": {
     "build": "npm run build:client && npm run build:server",
