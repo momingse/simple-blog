@@ -23,13 +23,13 @@ const AppHeader = () => {
             if (!Object.prototype.hasOwnProperty.call(routesIconMapping, name))
               return null;
             return (
-              <li key={path}>
+              <li key={name}>
                 <Link to={path}>{routesIconMapping[name]}</Link>
               </li>
             );
           }
           return (
-            <li key={path}>
+            <li key={name}>
               <Link to={path}>{name}</Link>
             </li>
           );
