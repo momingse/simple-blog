@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import useForceUpdate from "./useForceUpdate";
+import useIsomorphicLayoutEffect from "./useIsomorphicLayoutEffect";
 
 type CheckFunc = () => boolean;
 type UseEventListener = (
@@ -41,7 +42,7 @@ const useEventListener: UseEventListener = (type, checkFunc) => {
   const returnRef = useRef<boolean>(false);
   const observer = useObserver(type, checkFunc);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     observer.subscribe((returnValue) => {
       if (returnValue !== returnRef.current) {
         returnRef.current = returnValue;
