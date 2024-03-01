@@ -1,5 +1,6 @@
 import { blogsInfo } from "../App";
 import BlogCard from "../components/BlogCard";
+import FadeInWrapper from "../components/FadeInWrapper";
 
 export default function Blog() {
   return (
@@ -9,7 +10,10 @@ export default function Blog() {
           <h1 className="font-light text-4xl text-zinc-900">Blog</h1>
         </div>
       </div>
-      <div className="flex flex-col gap-4 w-full justify-center self-center">
+      <FadeInWrapper
+        key={"blog"}
+        className="flex flex-col gap-4 w-full justify-center self-center"
+      >
         {blogsInfo.map(({ date, topics, name }) => {
           return (
             <BlogCard
@@ -21,7 +25,7 @@ export default function Blog() {
             />
           );
         })}
-      </div>
+      </FadeInWrapper>
     </div>
   );
 }

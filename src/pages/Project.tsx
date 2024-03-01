@@ -1,5 +1,6 @@
 import { FC } from "react";
 import ProjectCard from "../components/ProjectCard";
+import FadeInWrapper from "../components/FadeInWrapper";
 
 export type ProjectInfo = {
   html_url: string;
@@ -26,9 +27,14 @@ const Project: SSR<ProjectProps> = ({ projectInfo }) => {
           <h1 className="font-light text-4xl text-zinc-900">Project</h1>
         </div>
       </div>
-      {projectInfo.map((repoInfo) => {
-        return <ProjectCard projectInfo={repoInfo} key={repoInfo.html_url} />;
-      })}
+      <FadeInWrapper
+        key={"project"}
+        className="flex flex-col gap-4 w-full justify-center self-center"
+      >
+        {projectInfo.map((repoInfo) => {
+          return <ProjectCard projectInfo={repoInfo} key={repoInfo.html_url} />;
+        })}
+      </FadeInWrapper>
     </div>
   );
 };

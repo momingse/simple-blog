@@ -1,10 +1,11 @@
+import FadeInWrapper from "../components/FadeInWrapper";
 import { SSR } from "./Project";
 
 type HomeInfo = {
   name: string;
   descipion: string;
   languages: string[];
-  mainTechStack: string[];
+  techStack: string[];
   interestedArea: string[];
 };
 
@@ -13,11 +14,13 @@ type HomeProps = {
 };
 
 const Home: SSR<HomeProps> = ({ homeInfo }) => {
-  const { name, descipion, languages, mainTechStack, interestedArea } =
-    homeInfo;
+  const { name, descipion, languages, techStack, interestedArea } = homeInfo;
 
   return (
-    <div className="flex flex-col max-w-[666px] pt-3 font-b m-auto gap-2">
+    <FadeInWrapper
+      key={"home"}
+      className="flex flex-col max-w-[666px] pt-3 font-b m-auto gap-2"
+    >
       <h1 className="font-light text-4xl text-zinc-900">{name}</h1>
       <div>{descipion}</div>
       <div>
@@ -31,8 +34,8 @@ const Home: SSR<HomeProps> = ({ homeInfo }) => {
         })}
       </div>
       <div>
-        <span className="font-bold">Familiar Tech Stack: </span>
-        {mainTechStack.map((tech) => {
+        <span className="font-bold">Tech Stack: </span>
+        {techStack.map((tech) => {
           return (
             <span key={tech} className="pl-2">
               {tech}
@@ -50,7 +53,7 @@ const Home: SSR<HomeProps> = ({ homeInfo }) => {
           );
         })}
       </div>
-    </div>
+    </FadeInWrapper>
   );
 };
 
@@ -60,7 +63,7 @@ Home.getInitialProps = () => {
       name: "Harry Chow",
       descipion: "A year 3 student from HKUST majored in Computer Sciencs.",
       languages: ["Javascript", "Python", "C\\C++", "Kotlin"],
-      mainTechStack: ["Reactjs", "Nextjs", "Expressjs"],
+      techStack: ["Reactjs", "Nextjs", "Expressjs"],
       interestedArea: ["FullStack", "AI", "Computer Vision"],
     },
   } as HomeProps;
