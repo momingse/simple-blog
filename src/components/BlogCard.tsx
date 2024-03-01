@@ -10,8 +10,11 @@ type BlogCardProps = {
 
 const BlogCard: FC<BlogCardProps> = ({ date, topics, name, to }) => {
   return (
-    <Link to={to}>
-      <div className="m-auto max-w-[666px] py-2 px-6 cursor-pointer bg-[#fafafa] rounded-xl text-zinc-500 hover:text-zinc-800 shadow-lg hover:border border-gray-200">
+    <div>
+      <Link
+        to={to}
+        className="block m-auto max-w-[666px] py-2 px-6 cursor-pointer bg-[#fafafa] rounded-xl text-zinc-500 hover:text-zinc-800 shadow-lg hover:border border-gray-200"
+      >
         <div className="text-2xl">{name}</div>
         <span className="text-sm text-zinc-400">{date}</span>
         <span className="text-sm text-zinc-400 sm:pl-4 sm:inline-flex flex gap-2">
@@ -19,8 +22,8 @@ const BlogCard: FC<BlogCardProps> = ({ date, topics, name, to }) => {
             <span key={topic}>{topic}</span>
           ))}
         </span>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 };
 
