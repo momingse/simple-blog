@@ -16,7 +16,7 @@ const AppHeader = () => {
 
   return (
     <nav className="flex justify-between py-3 px-7 text-[#9BA4B5]">
-      <Link to={"/"}>Momingse</Link>
+      <Link to={"/"}>Harry Chow</Link>
       <ul className="flex gap-4">
         {routes.map(({ name, path }) => {
           if (isMobile) {
