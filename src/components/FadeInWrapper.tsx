@@ -17,7 +17,6 @@ type FadeInWrapperProps = {
   onComplete?: () => void;
   WrapperTag?: JSX.ElementType;
   ChildTag?: JSX.ElementType;
-  key: string | number;
 };
 
 const FadeInWrapper: FC<FadeInWrapperProps> = ({
@@ -28,14 +27,9 @@ const FadeInWrapper: FC<FadeInWrapperProps> = ({
   duration = 0.8,
   WrapperTag = "div",
   ChildTag = "div",
-  key,
+  childKey,
 }) => {
   const [numberOfChildrenVisible, setNumberOfChildrenVisible] = useState(0);
-  const _key = useMemo(() => {
-    if (typeof key === "number") return key.toString();
-    return key;
-  }, [key]);
-
   useEffect(() => {
     setNumberOfChildrenVisible(0);
 
@@ -55,7 +49,7 @@ const FadeInWrapper: FC<FadeInWrapperProps> = ({
       {Children.map(children, (child, index) => {
         return (
           <ChildTag
-            key={_key + index}
+            key={index}
             style={{
               transition: `opacity ${duration}s, transform ${duration}s`,
               opacity: index < numberOfChildrenVisible ? 1 : 0,
