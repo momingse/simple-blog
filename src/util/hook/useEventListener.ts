@@ -2,28 +2,36 @@ import { useMemo, useRef } from "react";
 import useForceUpdate from "./useForceUpdate";
 import useIsomorphicLayoutEffect from "./useIsomorphicLayoutEffect";
 
-type CheckFunc = () => boolean;
-type UseEventListener = (
-  type: keyof WindowEventMap,
-  checkFunc: CheckFunc,
-) => boolean | null;
+type AcceptType = number | boolean;
+type SubscribeType = keyof WindowEventMap;
 
-type UseObserver = (
+type CheckFunc<T> = () => T;
+
+type UseObserver = <T>(
   type: keyof WindowEventMap,
-  checkFunc: CheckFunc,
-) => Observer;
-type Observer = {
-  subscribe: (returnFunc: SubscribeFunc) => void;
+  checkFunc: CheckFunc<T>,
+) => Observer<T>;
+
+type Observer<T> = {
+  subscribe: (returnFunc: SubscribeFunc<T>) => void;
   unsubscribe: () => void;
 };
 
-type SubscribeFunc = (returnValue: boolean) => void;
+type UseEventListener = <T extends AcceptType>(
+  type: keyof WindowEventMap,
+  checkFunc: CheckFunc<T>,
+) => T | null;
 
-const useObserver: UseObserver = (type, checkFunc) => {
+type SubscribeFunc<T> = (returnValue: T) => void;
+
+const useObserver: UseObserver = <T>(
+  type: SubscribeType,
+  checkFunc: CheckFunc<T>,
+) => {
   return useMemo(() => {
     let listenerFunc = null;
     return {
-      subscribe(sFunc: SubscribeFunc) {
+      subscribe(sFunc: SubscribeFunc<T>) {
         listenerFunc = () => {
           sFunc(checkFunc());
         };
@@ -37,10 +45,13 @@ const useObserver: UseObserver = (type, checkFunc) => {
   }, []);
 };
 
-const useEventListener: UseEventListener = (type, checkFunc) => {
+const useEventListener: UseEventListener = <T extends AcceptType>(
+  type: SubscribeType,
+  checkFunc: CheckFunc<T>,
+) => {
   const forceUpdate = useForceUpdate();
-  const returnRef = useRef<boolean>(false);
-  const observer = useObserver(type, checkFunc);
+  const returnRef = useRef<T | null>(null);
+  const observer = useObserver<T>(type, checkFunc);
 
   useIsomorphicLayoutEffect(() => {
     observer.subscribe((returnValue) => {
