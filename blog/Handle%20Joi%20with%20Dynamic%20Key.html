@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,400;0,500;0,700;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Harry Chow Web</title>
+    <script type="module" crossorigin src="/assets/index-DgGoiepB.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-8HZMd-9w.css">
+  </head>
+  <body>
+    <div id="app"><div class="relative"><nav class="flex justify-between py-3 px-7 text-[#9BA4B5]"><a href="/">Harry Chow</a><ul class="flex gap-4"><li><a href="/blog"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notepad-text "><path d="M8 2v4"></path><path d="M12 2v4"></path><path d="M16 2v4"></path><rect width="16" height="18" x="4" y="4" rx="2"></rect><path d="M8 10h6"></path><path d="M8 14h8"></path><path d="M8 18h5"></path></svg></a></li><li><a href="/project"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder "><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path></svg></a></li><a class="" href="https://github.com/momingse"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github "><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg></a><a class="" href="https://www.linkedin.com/in/wang-hin-chow-5ab517271/"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin "><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg></a></ul></nav><div class="py-3 px-6 md:py-9"><div class="w-full"><div class="m-auto flex justify-center"><div class="hidden lg:block mr-2 w-40"></div><div id="blog" class="max-w-[666px]"><h1>Joi with Dynamic Key</h1>
+<h2 id=Problem>Problem</h2><p>You want to validate an object with a dynamic key. For example, the key is dependent on the database or the user input.</p>
+<h2 id=Solution>Solution</h2><h3>1. use <code>Joi.object().pattern()</code> to validate an object with a dynamic key.</h3>
+<p>When the key is dynamic but in a certain pattern, you can use <code>Joi.object().pattern()</code> to validate the object.</p>
+<pre><code class="language-js">const scheme = Joi.object().pattern(
+  Joi.string(),
+  Joi.object({
+    subject: Joi.string(),
+  }),
+);
+</code></pre>
+<p><code>object.pattern(pattern, schema, [options])</code></p>
+<ul>
+<li>pattern - a <code>Joi</code> schema object or a regex for the validation of the keys against.</li>
+<li>schema - a <code>Joi</code> schema object to validate the values against.</li>
+</ul>
+<h3>2. use <code>object.keys()</code></h3>
+<p>When the key is can be get from the database or other function which is fixed and not with any pattern.</p>
+<pre><code class="language-js">const dynamicKey = getDynamicKey(); // which is an array of string
+const scheme = Joi.object({
+  somefixedKey: Joi.number(),
+});
+const dynamicKeyScheme = dynamicKey.reduce((acc, key) =&gt; {
+  return acc.keys({
+    [key]: Joi.string(),
+  });
+}, scheme);
+</code></pre>
+<p><code>object.keys([schema])</code></p>
+<ul>
+<li>schema - optional object schema to validate keys against</li>
+</ul>
+<p>Since <code>Joi.object()</code> actucally is returning a extended <code>Joi.object().keys()</code> so <code>Joi.object()</code> will inherit all the methods from <code>Joi.object().keys()</code> which also include <code>keys()</code>.</p>
+<pre><code class="language-js">method(schema) {
+
+    assert(schema === undefined || typeof schema === &#39;object&#39;, &#39;Object schema must be a valid object&#39;);
+    assert(!Common.isSchema(schema), &#39;Object schema cannot be a joi schema&#39;);
+
+    const obj = this.clone();
+
+    if (!schema) {                                      // Allow all
+        obj.$_terms.keys = null;
+    }
+    else if (!Object.keys(schema).length) {             // Allow none
+        obj.$_terms.keys = new internals.Keys();
+    }
+    else {
+        obj.$_terms.keys = obj.$_terms.keys ? obj.$_terms.keys.filter((child) =&gt; !schema.hasOwnProperty(child.key)) : new internals.Keys();
+        for (const key in schema) {
+            Common.tryWithPath(() =&gt; obj.$_terms.keys.push({ key, schema: this.$_compile(schema[key]) }), key);
+        }
+    }
+
+    return obj.$_mutateRebuild();
+}
+</code></pre>
+<p>Here is the source code of <code>Joi.object().keys()</code> which return a method that return <code>obj.$_mutateRebuild()</code>.</p>
+<p>The first two line is checking if schema is valid, then clone itself. And the rest of the code is adding the scheme. The first two is checking if the schema is null, if yes, then allow all. If the schema is empty object, then allow none. If the schema is not empty, then add the schema to the <code>obj.$_terms.keys</code> using push. Therefore, we can use <code>Joi.object().keys()</code> to add the dynamic key to the schema.</p>
+<p>But since each time we add a key to the schema, we need to clone the schema and add the key to the new schema which can impact the performance. The pros of this solution is it maintain the schema structure.</p>
+<h3>3. use destructuring</h3>
+<p>Which is similar to the second solution, but using destructuring to add the dynamic key to the schema.</p>
+<pre><code class="language-js">const dynamicKey = getDynamicKey(); // which is an array of string
+const scheme = Joi.object({
+  somefixedKey: Joi.number(),
+  ...dynamicKey.reduce((acc, key) =&gt; {
+    return {
+      ...acc,
+      [key]: Joi.string(),
+    };
+  }, {}),
+});
+</code></pre>
+<p>This solution prevent the performance issue of the second solution, but it have the chance to break the schema structure.</p>
+<h3>4. use <code>Joi.alternatives().try()</code></h3>
+<p>if there is only few like 1-3 schema, you can use <code>Joi.alternatives().try()</code> to validate the object.</p>
+<pre><code class="language-js">const scheme = Joi.alternatives().try({
+  possible1: Joi.string(),
+  possible2: Joi.string(),
+  possible3: Joi.string(),
+});
+</code></pre>
+<h3>5. use <code>Joi.object().unknown()</code></h3>
+<p>When it is not predictable what the key will be, you can use <code>Joi.object().unknown()</code> to validate the object.</p>
+<pre><code class="language-js">const scheme = Joi.object().unknown(true);
+</code></pre>
+</div><div class="hidden lg:block ml-2 w-40 border-zinc-50"><div class="sticky top-10 text-sm text-zinc-600 flex"><div class="h-6 border border-sky-500 absolute" style="border-width:1px;top:0px;transition:top 0.2s"></div><div><div class="cursor-pointer pl-3 pb-1">Problem</div><div class="cursor-pointer pl-3 pb-1">Solution</div></div></div></div></div></div></div></div></div>
+  </body>
+</html>

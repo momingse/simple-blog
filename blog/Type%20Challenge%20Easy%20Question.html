@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,400;0,500;0,700;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Harry Chow Web</title>
+    <script type="module" crossorigin src="/assets/index-DgGoiepB.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-8HZMd-9w.css">
+  </head>
+  <body>
+    <div id="app"><div class="relative"><nav class="flex justify-between py-3 px-7 text-[#9BA4B5]"><a href="/">Harry Chow</a><ul class="flex gap-4"><li><a href="/blog"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notepad-text "><path d="M8 2v4"></path><path d="M12 2v4"></path><path d="M16 2v4"></path><rect width="16" height="18" x="4" y="4" rx="2"></rect><path d="M8 10h6"></path><path d="M8 14h8"></path><path d="M8 18h5"></path></svg></a></li><li><a href="/project"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder "><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path></svg></a></li><a class="" href="https://github.com/momingse"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github "><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg></a><a class="" href="https://www.linkedin.com/in/wang-hin-chow-5ab517271/"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin "><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg></a></ul></nav><div class="py-3 px-6 md:py-9"><div class="w-full"><div class="m-auto flex justify-center"><div class="hidden lg:block mr-2 w-40"></div><div id="blog" class="max-w-[666px]"><h1>Type Challenge Easy 1</h1>
+<h2 id=Pick%20-%20004>Pick - 004</h2><p>we need to implement the built-in <code>Pick&lt;T, K&gt;</code> without using it.</p>
+<pre><code class="language-ts">interface Todo {
+  title: string;
+  description: string;
+  completed: boolean;
+}
+
+type TodoPreview = MyPick&lt;Todo, &quot;title&quot; | &quot;completed&quot;&gt;;
+
+const todo: TodoPreview = {
+  title: &quot;Clean room&quot;,
+  completed: false,
+};
+</code></pre>
+<p>Here is my ans:</p>
+<p><a href="https://www.typescriptlang.org/play?#code/C4TwDgpgBAsiAKBLAxgawDwBUA0UDSUEAHsBAHYAmAzlKhCAPYBmUmAfFALxQDeAUFCgBtJGggU89KIjL4AugC5WIlHQn05Abj4BfbXxmkATkwCGyaJgYUGvAVGCJgAGwhKqwIzIDm2wRQgqZC8wRwYyd08fPyhkBgBbMFdSCiUAIwYGV1MybR0+PlBIVmsGeCMIADdECAB3LlgEVSxS3AAiRxcINqgAHyg2uMTk8Ta2fTiyDwdSpSsbcqqa+u5+QU7XJTaAYWzZI0z4tux7IaSIFKUzZyoIE70+IA">Typescript Playground</a></p>
+<pre><code class="language-ts">type MyPick&lt;T, K extends keyof T&gt; = {
+  [PickedKey in K]: T[PickedKey];
+};
+</code></pre>
+<p>There are few main point:</p>
+<ol>
+<li>use <code>K extends keyof T</code> to make sure K must be the subset of key of T. (I original use <code>K extends number | string | symbol</code>, so that I can iterate, but I need to add conditional and make the other key become <code>never</code>...)</li>
+<li>use of <code>in</code> allow use to iterate every possible type (e.g. <code>type name = number | age</code>)</li>
+</ol>
+<p>Exmaple:</p>
+<p><a href="https://github.com/type-challenges/type-challenges/issues/13427">Reference from github</a></p>
+<pre><code class="language-ts">const getValue: &lt;T extends Object, K extends keyof T&gt;(
+  obj: T,
+  key: K,
+) =&gt; T[K] = (obj, key) =&gt; {
+  return obj[key];
+};
+</code></pre>
+<hr>
+<h2 id=Readonly%20-%20007>Readonly - 007</h2><pre><code class="language-ts">interface Todo {
+  title: string;
+  description: string;
+}
+
+const todo: MyReadonly&lt;Todo&gt; = {
+  title: &quot;Hey&quot;,
+  description: &quot;foobar&quot;,
+};
+
+todo.title = &quot;Hello&quot;; // Error: cannot reassign a readonly property
+todo.description = &quot;barFoo&quot;; // Error: cannot reassign a readonly property
+</code></pre>
+<p>Here is my ans (this is too easy so no explaination and playground):</p>
+<pre><code class="language-ts">type MyReadonly&lt;T&gt; = {
+  readonly [K in keyof T]: T[K];
+};
+</code></pre>
+<hr>
+<h2 id=Tuple%20to%20Object%20-%20011>Tuple to Object - 011</h2><pre><code class="language-ts">const tuple = [&quot;tesla&quot;, &quot;model 3&quot;, &quot;model X&quot;, &quot;model Y&quot;] as const;
+
+type result = TupleToObject&lt;typeof tuple&gt;; // expected { &#39;tesla&#39;: &#39;tesla&#39;, &#39;model 3&#39;: &#39;model 3&#39;, &#39;model X&#39;: &#39;model X&#39;, &#39;model Y&#39;: &#39;model Y&#39;}
+</code></pre>
+<p>Here is my ans:</p>
+<p><a href="https://www.typescriptlang.org/play?#code/C4TwDgpgBAKgrmANhGB7A8gIwFYQMbAA8MUEAHsBAHYAmAzlAE4QCGNqViIUACo6pEagA0hBABtALoA+KAF4oAbwBQUKOICSUAJZVY4qnAC2mCI0mSAXFA0BuZQF97yvBzrAoDBQGUQJ1IgAFACMAJQubh4s8mriwQA0UADkAExJiQDMiXSSEVTuUJjW8EgoGDj4RKCQqABmUCyyCipqwdYJqslp1qnpnRnWWZ101nTxjkA">Typescript Playground</a></p>
+<pre><code class="language-ts">type TupleToObject&lt;T extends readonly PropertyKey[]&gt; = {
+  [I in T[number]]: I;
+};
+</code></pre>
+<p>There are few main points:</p>
+<ol>
+<li>use <code>T[number]</code> for array can get all the type of its element. Same as <code>T[keyof T]</code> when T is object, it return all the type of its value.</li>
+<li><code>PropertyKey</code> is equivalent to <code>number | string | symbol</code> which are types that allow for key. (As will are going to convert to an object, we need value key)</li>
+<li><code>keyof any</code> is also equivalent to <code>number | string | symbol</code></li>
+</ol>
+<hr>
+<h2 id=First%20of%20Array%20-%20014>First of Array - 014</h2><pre><code class="language-ts">type arr1 = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;];
+type arr2 = [3, 2, 1];
+
+type head1 = First&lt;arr1&gt;; // expected to be &#39;a&#39;
+type head2 = First&lt;arr2&gt;; // expected to be 3
+</code></pre>
+<p>Here are answers from communite (cuz he provide three ans):</p>
+<p><a href="https://github.com/type-challenges/type-c:wwwhallenges/issues/16315">Link to Ans</a></p>
+<pre><code class="language-ts">//answer1
+type First&lt;T extends any[]&gt; = T extends [] ? never : T[0];
+
+//answer2
+type First&lt;T extends any[]&gt; = T[&quot;length&quot;] extends 0 ? never : T[0];
+
+//answer3
+type First&lt;T extends any[]&gt; = T extends [infer A, ...infer rest] ? A : never;
+</code></pre>
+<p>Here is the explaination for each answer:</p>
+<ol>
+<li>It use <code>T extends [] ? never : T[0]</code>, which check if <code>T</code> is an empty array and assign <code>never</code> if yes and <code>T[0]</code> return the first element if no</li>
+<li>It use <code>T[length] extends 0 ? never : T[0]</code>, similiar to ans1 but instand it change the conditional by checking the <code>T[length] extends 0</code>. As length is one of the property of Array so <code>T[length]</code> will work.</li>
+<li>It use <code>T extends [infer A, ...infer rest] ? A : never</code>, also similiar to ans1 but use <code>infer</code> which it check if <code>A</code> exist and return if yes otherwise return <code>never</code></li>
+</ol>
+<p>Extra reading about <code>infer</code>:</p>
+<p>It usually used after <code>extends</code> or after <code>?</code> like this above case. Most of the time it is used to determine if some value exist.</p>
+<p><a href="https://gist.github.com/chentsulin/dae5f2da512091dbb90f65ab897c2ae9#file-last-array-element-ts">Example of getting the last element</a></p>
+<pre><code class="language-ts">export type LastArrayElement&lt;ValueType extends readonly unknown[]&gt; =
+  ValueType extends [infer ElementType] // &lt;- check if ValueType is array with length 1 e.g. [&#39;1&#39;]
+    ? ElementType // &lt;- return if yes
+    : ValueType extends [infer _, ...infer Tail] // &lt;- extract the rest as Tail
+      ? LastArrayElement&lt;Tail&gt; // &lt;- if ValueType is array with length &gt; 1, resursively do the extraction
+      : never; // &lt;- else it means it is an empty array which can return never
+</code></pre>
+<p><a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#type-inference-in-conditional-types">Implement of ReturnType in Typescript Handbook</a></p>
+<pre><code class="language-ts">type ReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : any;
+</code></pre>
+<p><a href="https://stackoverflow.com/questions/50374908/transform-union-type-to-intersection-type">Example of union to intersection</a></p>
+<pre><code class="language-ts">type UnionToIntersection&lt;U&gt; = (U extends any ? (x: U) =&gt; void : never) extends (
+  x: infer I,
+) =&gt; void
+  ? I
+  : never;
+
+// Example
+type Weird = UnionToIntersection&lt;string | number | boolean&gt;;
+type Weird = string &amp; number &amp; true &amp; false; // &lt;- this shows boolean = true | false, and become never after TS3.6+
+
+// Explaination
+// This true every into an Function return void
+type Unpacker1&lt;U&gt; = U extends any ? (x: U) =&gt; void : never;
+const demo1: Unpacker1&lt;&quot;a&quot; | &quot;b&quot;&gt; = (x: &quot;a&quot;) =&gt; {};
+
+// Multiple candidates for the same type variable in contra-variant positions causes an intersection type to be inferred(copy from Typescript Handbook)
+type Unpacker2&lt;U&gt; = (U extends any ? (x: U) =&gt; void : never) extends (
+  x: infer I,
+) =&gt; void
+  ? I
+  : never;
+const demo2: Unpacker2&lt;{ a: 1 } | { b: 2 }&gt; = { a: 1, b: 2 };
+</code></pre>
+<hr>
+<h2 id=Length%20of%20Tuple%20-%20018>Length of Tuple - 018</h2><pre><code class="language-ts">type tesla = [&quot;tesla&quot;, &quot;model 3&quot;, &quot;model X&quot;, &quot;model Y&quot;];
+type spaceX = [
+  &quot;FALCON 9&quot;,
+  &quot;FALCON HEAVY&quot;,
+  &quot;DRAGON&quot;,
+  &quot;STARSHIP&quot;,
+  &quot;HUMAN SPACEFLIGHT&quot;,
+];
+
+type teslaLength = Length&lt;tesla&gt;; // expected 4
+type spaceXLength = Length&lt;spaceX&gt;; // expected 5
+</code></pre>
+<p>Here is my ans (this is too easy so no explaination and playground):</p>
+<pre><code class="language-ts">type Length&lt;T extends ReadonlyArray&lt;any&gt;&gt; = T[&quot;length&quot;];
+</code></pre>
+<hr>
+<h2 id=Exclude%20-%20043>Exclude - 043</h2><pre><code class="language-ts">type Result = MyExclude&lt;&quot;a&quot; | &quot;b&quot; | &quot;c&quot;, &quot;a&quot;&gt;; // &#39;b&#39; | &#39;c&#39;
+</code></pre>
+<p>Here is my ans (this is too easy so no explaination and playground):</p>
+<pre><code class="language-ts">type MyExclude&lt;T, U&gt; = T extends U ? never : T;
+</code></pre>
+<hr>
+<h2 id=Awaited%20-%20189>Awaited - 189</h2><pre><code class="language-ts">type ExampleType = Promise&lt;string&gt;;
+
+type Result = MyAwaited&lt;ExampleType&gt;; // string
+</code></pre>
+<p>Here is my ans:</p>
+<p><a href="https://www.typescriptlang.org/play?#code/C4TwDgpgBAsiAKAnA9gWwJYGcIB4AqAfFALxQDeUwAFhAHYBcUAFMrQGYCuANm+l1xAAmjJgENEAc0Z4AlCSKjaIOcQVKoAXwDcAKB2hIsEAEEA7qPTAh+KBAAeV2oMxGkaLLkUgCRUnlsOdM6uKBjYOOjsEIhQAEoEOlBQAPxxAY7BcG5huJFs0VAA8glJSalwZhZWgjjxiaWMsfWMtBAAbtG6OgDGrJjAUKIkUK2mUNkeTEyIEJjIXB2IADRQMwBWEN3AKkRk9djAeOioEMgcwFM7q7Pzi0wA5IIQqMj3MisAjAAMPzI6Gn8DNBoigYqQKuZLNYgcg2IMCFogA">Link to Ans</a></p>
+<pre><code class="language-ts">type MyPromise&lt;T&gt; = { then: (onfulfilled: (arg: T) =&gt; any) =&gt; any };
+
+type MyAwaited&lt;T extends MyPromise&lt;any&gt;&gt; = T extends MyPromise&lt;infer R&gt;
+  ? R extends MyPromise&lt;infer O&gt;
+    ? MyAwaited&lt;R&gt;
+    : R
+  : never;
+</code></pre>
+<p>There are few main points:</p>
+<ol>
+<li>since from the last test case <code>type T = { then: (onfulfilled: (arg: number) =&gt; any) =&gt; any };</code>, which show all the type fullfilled this type is allowed so we need to redefined a new Promise type.</li>
+<li>we need to detect if the value inside is also a <code>Promise</code>, and use recursion to extract the return value.</li>
+<li>actucally, <code>PromiseLike&lt;T&gt;</code> can do similar thing as <code>MyPromise&lt;T&gt;</code>, here is the definition of <code>PromiseLike&lt;T&gt;</code>:<pre><code class="language-ts">interface PromiseLike&lt;T&gt; {
+  /**
+   * Attaches callbacks for the resolution and/or rejection of the Promise.
+   * @param onfulfilled The callback to execute when the Promise is resolved.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of which ever callback is executed.
+   */
+  then&lt;TResult1 = T, TResult2 = never&gt;(
+    onfulfilled?:
+      | ((value: T) =&gt; TResult1 | PromiseLike&lt;TResult1&gt;)
+      | undefined
+      | null,
+    onrejected?:
+      | ((reason: any) =&gt; TResult2 | PromiseLike&lt;TResult2&gt;)
+      | undefined
+      | null,
+  ): PromiseLike&lt;TResult1 | TResult2&gt;;
+}
+</code></pre>
+</li>
+</ol>
+</div><div class="hidden lg:block ml-2 w-40 border-zinc-50"><div class="sticky top-10 text-sm text-zinc-600 flex"><div class="h-6 border border-sky-500 absolute" style="border-width:1px;top:0px;transition:top 0.2s"></div><div><div class="cursor-pointer pl-3 pb-1">Pick - 004</div><div class="cursor-pointer pl-3 pb-1">Readonly - 007</div><div class="cursor-pointer pl-3 pb-1">Tuple to Object - 011</div><div class="cursor-pointer pl-3 pb-1">First of Array - 014</div><div class="cursor-pointer pl-3 pb-1">Length of Tuple - 018</div><div class="cursor-pointer pl-3 pb-1">Exclude - 043</div><div class="cursor-pointer pl-3 pb-1">Awaited - 189</div></div></div></div></div></div></div></div></div>
+  </body>
+</html>
