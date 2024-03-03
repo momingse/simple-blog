@@ -1,12 +1,4 @@
-import {
-  FC,
-  HTMLProps,
-  ReactNode,
-  Children,
-  useEffect,
-  useState,
-  useMemo,
-} from "react";
+import { Children, FC, HTMLProps, ReactNode, useEffect, useState } from "react";
 import { classNameCombiner } from "../util/helper";
 
 type FadeInWrapperProps = {
@@ -27,7 +19,6 @@ const FadeInWrapper: FC<FadeInWrapperProps> = ({
   duration = 0.8,
   WrapperTag = "div",
   ChildTag = "div",
-  childKey,
 }) => {
   const [numberOfChildrenVisible, setNumberOfChildrenVisible] = useState(0);
   useEffect(() => {
