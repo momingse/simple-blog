@@ -67,35 +67,31 @@ const routesOrder: Readonly<{ [key: string]: number }> = Object.freeze({
   Home: 0,
 });
 
-export const routes = (
-  await Promise.all(
-    Object.keys(PagePathsWithComponents).map(async (path: string) => {
-      const name = path.match(/\.\/pages\/(.*)\.tsx$/)![1];
-      const component = PagePathsWithComponents[path].default;
-      let props = {};
-      try {
-        props = component.getInitialProps
-          ? await component.getInitialProps()
-          : {};
-      } catch (err) {
-        console.log(err);
-      }
-      return {
-        name,
-        path: name === "Home" ? "/" : `/${name.toLowerCase()}`,
-        component: component(props),
-      } as RouteInfo;
-    }),
-  )
-).sort((a, b) => {
-  const aP = Object.prototype.hasOwnProperty.call(routesOrder, a.name)
-    ? routesOrder[a.name]
-    : 100;
-  const bP = Object.prototype.hasOwnProperty.call(routesOrder, b.name)
-    ? routesOrder[b.name]
-    : 100;
-  return aP - bP;
-});
+export const routes = Object.keys(PagePathsWithComponents)
+  .map((path: string) => {
+    const name = path.match(/\.\/pages\/(.*)\.tsx$/)![1];
+    const component = PagePathsWithComponents[path].default;
+    let props = {};
+    try {
+      props = component.getInitialProps ? component.getInitialProps() : {};
+    } catch (err) {
+      console.log(err);
+    }
+    return {
+      name,
+      path: name === "Home" ? "/" : `/${name.toLowerCase()}`,
+      component: component(props),
+    } as RouteInfo;
+  })
+  .sort((a, b) => {
+    const aP = Object.prototype.hasOwnProperty.call(routesOrder, a.name)
+      ? routesOrder[a.name]
+      : 100;
+    const bP = Object.prototype.hasOwnProperty.call(routesOrder, b.name)
+      ? routesOrder[b.name]
+      : 100;
+    return aP - bP;
+  });
 
 export function App() {
   return (

@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()],
   build: {
     minify: false,
+    target: "es2019",
   },
   assetsInclude: ["**/*.md"],
 });

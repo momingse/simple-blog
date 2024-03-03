@@ -39,7 +39,7 @@ const Project: SSR<ProjectProps> = ({ projectInfo }) => {
   );
 };
 
-Project.getInitialProps = async () => {
+Project.getInitialProps = () => {
   return {
     projectInfo: [
       {
