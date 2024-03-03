@@ -25,25 +25,40 @@ export const blogsInfo = Object.entries(blogsInMD).map(([key, value]) => {
   const date = match?.at(1) || "";
   const topics = match?.at(2)?.split(" ") || [];
   const name = key.match(/\.\/blogs\/(.*)\.md$/)![1];
-  let html = "";
-  if (match) {
-    html = marked(value.default.replace(match?.at(0), ""));
-  } else {
-    html = marked(value.default);
-  }
+  const mdValue = match
+    ? value.default.replace(match.at(0), "")
+    : value.default;
+  const id: string[] = [];
+  const html = marked
+    .use({
+      renderer: {
+        heading(text, level, raw) {
+          if (level != 2) return false;
+
+          const encodeRaw = encodeURI(raw);
+          const html = `<h2 id=${encodeRaw}>${raw}</h2>`;
+          id.push(encodeRaw);
+
+          return html;
+        },
+      },
+    })
+    .parse(mdValue);
+
   return {
     date,
     topics,
     name,
     html,
+    id,
   };
 });
 
-const blogsRoutes = blogsInfo.map(({ name, html }) => {
+const blogsRoutes = blogsInfo.map(({ name, html, id }) => {
   return {
     name,
     path: `/blog/${name}`,
-    component: <BlogTemplate html={html} />,
+    component: <BlogTemplate html={html} headingId={id} />,
   } as RouteInfo;
 });
 
