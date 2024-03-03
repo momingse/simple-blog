@@ -25,3 +25,4 @@ Just simply add blog written in markdown to /src/blogs with name as the blog tit
 ## Reference:
 
 - [Anthony Fu 博客](https://antfu.me/projects)
+- [react-fade-in](https://www.npmjs.com/package/react-fade-in)

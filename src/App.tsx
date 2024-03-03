@@ -25,25 +25,40 @@ export const blogsInfo = Object.entries(blogsInMD).map(([key, value]) => {
   const date = match?.at(1) || "";
   const topics = match?.at(2)?.split(" ") || [];
   const name = key.match(/\.\/blogs\/(.*)\.md$/)![1];
-  let html = "";
-  if (match) {
-    html = marked(value.default.replace(match?.at(0), ""));
-  } else {
-    html = marked(value.default);
-  }
+  const mdValue = match
+    ? value.default.replace(match.at(0), "")
+    : value.default;
+  const id: string[] = [];
+  const html = marked
+    .use({
+      renderer: {
+        heading(text, level, raw) {
+          if (level != 2) return false;
+
+          const encodeRaw = encodeURI(raw);
+          const html = `<h2 id=${encodeRaw}>${raw}</h2>`;
+          id.push(encodeRaw);
+
+          return html;
+        },
+      },
+    })
+    .parse(mdValue);
+
   return {
     date,
     topics,
     name,
     html,
+    id,
   };
 });
 
-const blogsRoutes = blogsInfo.map(({ name, html }) => {
+const blogsRoutes = blogsInfo.map(({ name, html, id }) => {
   return {
     name,
     path: `/blog/${name}`,
-    component: <BlogTemplate html={html} />,
+    component: <BlogTemplate html={html} headingId={id} />,
   } as RouteInfo;
 });
 
@@ -55,10 +70,17 @@ const routesOrder: Readonly<{ [key: string]: number }> = Object.freeze({
 export const routes = Object.keys(PagePathsWithComponents)
   .map((path: string) => {
     const name = path.match(/\.\/pages\/(.*)\.tsx$/)![1];
+    const component = PagePathsWithComponents[path].default;
+    let props = {};
+    try {
+      props = component.getInitialProps ? component.getInitialProps() : {};
+    } catch (err) {
+      console.log(err);
+    }
     return {
       name,
       path: name === "Home" ? "/" : `/${name.toLowerCase()}`,
-      component: PagePathsWithComponents[path].default(),
+      component: component(props),
     } as RouteInfo;
   })
   .sort((a, b) => {
@@ -75,11 +97,11 @@ export function App() {
   return (
     <AppLayout>
       <Routes>
-        {routes.map(({ path, component: RouteComp }) => {
-          return <Route key={path} path={path} element={RouteComp} />;
+        {routes.map(({ name, path, component: RouteComp }) => {
+          return <Route key={name} path={path} element={RouteComp} />;
         })}
-        {blogsRoutes.map(({ path, component: RouteComp }) => {
-          return <Route key={path} path={path} element={RouteComp} />;
+        {blogsRoutes.map(({ name, path, component: RouteComp }) => {
+          return <Route key={name} path={path} element={RouteComp} />;
         })}
       </Routes>
     </AppLayout>

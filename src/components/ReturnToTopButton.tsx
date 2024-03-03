@@ -10,7 +10,7 @@ const ReturnToTopButton: FC<ReturnToTopButtonProps> = ({ className = "" }) => {
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  const show = useEventListener("scroll", () => {
+  const show = useEventListener<boolean>("scroll", () => {
     return window.scrollY > 100;
   });
 

@@ -16,20 +16,20 @@ const AppHeader = () => {
 
   return (
     <nav className="flex justify-between py-3 px-7 text-[#9BA4B5]">
-      <Link to={"/"}>Momingse</Link>
+      <Link to={"/"}>Harry Chow</Link>
       <ul className="flex gap-4">
         {routes.map(({ name, path }) => {
           if (isMobile) {
             if (!Object.prototype.hasOwnProperty.call(routesIconMapping, name))
               return null;
             return (
-              <li key={path}>
+              <li key={name}>
                 <Link to={path}>{routesIconMapping[name]}</Link>
               </li>
             );
           }
           return (
-            <li key={path}>
+            <li key={name}>
               <Link to={path}>{name}</Link>
             </li>
           );

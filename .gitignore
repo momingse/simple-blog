@@ -1,4 +1,5 @@
 /dist
 /node_modules
-/src/blogs/**.*
-!/src/blogs/Example.md
+.env
+/src/blogs/**/**.md
+.DS_Store

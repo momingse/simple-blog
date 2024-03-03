@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import useForceUpdate from "./useForceUpdate";
 import useIsomorphicLayoutEffect from "./useIsomorphicLayoutEffect";
 
