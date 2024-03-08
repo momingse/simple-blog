@@ -20,6 +20,7 @@ type Observer<T> = {
 type UseEventListener = <T extends AcceptType>(
   type: keyof WindowEventMap,
   checkFunc: CheckFunc<T>,
+  initialValue?: T,
 ) => T | null;
 
 type SubscribeFunc<T> = (returnValue: T) => void;
@@ -48,9 +49,10 @@ const useObserver: UseObserver = <T>(
 const useEventListener: UseEventListener = <T extends AcceptType>(
   type: SubscribeType,
   checkFunc: CheckFunc<T>,
+  initialValue?: T,
 ) => {
   const forceUpdate = useForceUpdate();
-  const returnRef = useRef<T | null>(null);
+  const returnRef = useRef<T | null>(initialValue ?? null);
   const observer = useObserver<T>(type, checkFunc);
 
   useIsomorphicLayoutEffect(() => {

@@ -4,7 +4,10 @@ import Anchor from "./Anchor";
 
 type BlogTemplateProps = {
   html: string;
-  headingId: string[];
+  headingId: {
+    level: 2 | 3;
+    id: string;
+  }[]
 };
 
 const BlogTemplate: FC<BlogTemplateProps> = ({ html, headingId }) => {
@@ -13,10 +16,12 @@ const BlogTemplate: FC<BlogTemplateProps> = ({ html, headingId }) => {
   });
 
   const items = useMemo(() => {
-    return headingId.map((id) => {
+    return headingId.map(({ id, level }) => {
+      const title = decodeURI(id.replace(/---\d+$/, ""));
       return {
         id,
-        title: decodeURI(id),
+        title, 
+        level,
       };
     });
   }, [headingId]);
@@ -33,7 +38,7 @@ const BlogTemplate: FC<BlogTemplateProps> = ({ html, headingId }) => {
         <div className="hidden lg:block ml-2 w-40 border-zinc-50">
           <Anchor
             items={items}
-            className="sticky top-10 text-sm text-zinc-600"
+            className="sticky top-10 text-zinc-600 text-xs overflow-hidden whitespace-nowrap text-ellipsis"
             key={items[0].id}
           />
         </div>
