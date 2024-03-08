@@ -1,5 +1,11 @@
 # Problem Faced In React Development 1
 
+---
+
+date: 08/03/2024
+topics: react javascript 
+
+---
 
 ## Problem 1: Dynamic Video Source
 
@@ -63,6 +69,6 @@ const VideoPreview = ({videoUrl}) => {
 For ssr, if the initial videoUrl is depended on the js code, like different video for window width, the video will not be rendered correctly. The video will be rendered with the initial videoUrl, and then re-rendered with the correct videoUrl. This is because the videoUrl is not available in the server side, initial video will appear for a short time before the correct video is rendered. Therefore we should prevent the video from rendering in the server side in this case.
 
 ### References:
-- [Updating source URL on HTML5 video with React](https://stackoverflow.com/questions/3732562/can-i-use-javascript-to-dynamically-change-a-videos-source)
+- [Can I use javascript to dynamically change a video's source?](https://stackoverflow.com/questions/3732562/can-i-use-javascript-to-dynamically-change-a-videos-source)
 - [Updating source URL on HTML5 video with React](https://stackoverflow.com/questions/41303012/updating-source-url-on-html5-video-with-react)
 
