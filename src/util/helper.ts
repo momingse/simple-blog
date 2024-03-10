@@ -13,4 +13,14 @@ const classNameCombiner: ClassNameCombiner = (...classNames) => {
   return filteredClassName.join(" ");
 };
 
-export { classNameCombiner };
+const debounce = <T extends any[]>(fn: (...args: T) => void, delay: number) => {
+  let timer: NodeJS.Timeout;
+  return (...args: T) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn(...args);
+    }, delay);
+  };
+}
+
+export { classNameCombiner, debounce };

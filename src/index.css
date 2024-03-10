@@ -37,4 +37,7 @@
   nav a {
     @apply hover:text-zinc-700;
   }
+  *:focus {
+    outline: none;
+}
 }
