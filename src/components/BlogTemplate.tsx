@@ -28,7 +28,7 @@ const BlogTemplate: FC<BlogTemplateProps> = ({ html, headingId }) => {
 
   return (
     <div className="w-full">
-      <div className="m-auto flex justify-center">
+      <div className="m-auto lg:flex justify-center">
         <div className="hidden lg:block mr-2 w-40" />
         <div
           id="blog"
