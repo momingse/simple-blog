@@ -3,21 +3,20 @@
 ---
 
 date: 08/03/2024
-topics: react javascript 
+topics: react javascript
 
 ---
 
 ## Problem 1: Dynamic Video Source
 
-I was working on a video preview component where it should update the source after a new video is uploaded. But even the url is updated, the video source is not updated. 
+I was working on a video preview component where it should update the source after a new video is uploaded. But even the url is updated, the video source is not updated.
 
 consider the following code, suppose the `videoUrl` is updated after a new video is uploaded, but the video source is not updated.
 
 ```tsx
-
 import React, { useState } from "react";
 
-const VideoPreview = ({videoUrl}) => {
+const VideoPreview = ({ videoUrl }) => {
   return (
     <video width="320" height="240" controls>
       <source src={videoUrl} type="video/mp4" />
@@ -33,7 +32,7 @@ Since React uses the key to identify the component, we can update the key of the
 ```tsx
 import React, { useState } from "react";
 
-const VideoPreview = ({videoUrl}) => {
+const VideoPreview = ({ videoUrl }) => {
   return (
     <video key={videoUrl} width="320" height="240" controls>
       <source src={videoUrl} type="video/mp4" />
@@ -49,7 +48,7 @@ There is a native way to update the video, which is use the `load()` method of t
 ```tsx
 import React, { useState, useRef, useEffect } from "react";
 
-const VideoPreview = ({videoUrl}) => {
+const VideoPreview = ({ videoUrl }) => {
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -68,7 +67,54 @@ const VideoPreview = ({videoUrl}) => {
 
 For ssr, if the initial videoUrl is depended on the js code, like different video for window width, the video will not be rendered correctly. The video will be rendered with the initial videoUrl, and then re-rendered with the correct videoUrl. This is because the videoUrl is not available in the server side, initial video will appear for a short time before the correct video is rendered. Therefore we should prevent the video from rendering in the server side in this case.
 
-### References:
+## Problem 2: Measuring a DOM node
+
+I was working on a component that needs to measure the size of a DOM node. I need to get the width and height of the DOM node after it is rendered. I wrote something like this.
+
+```tsx
+const MeasureNode = () => {
+  const nodeRef = useRef(null);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    if (nodeRef.current) {
+      setWidth(nodeRef.current.offsetWidth);
+    }
+  }, [nodeRef.current]);
+
+  return (
+    <div ref={nodeRef}>
+      <p>Width: {width}</p>
+    </div>
+  );
+};
+```
+
+### Solution: Use `useCallback`
+
+Since the `nodeRef.current` will not trigger the effect when it is updated, we should use `useCallback` to get the width of the node when the node is updated.
+
+```tsx
+function MeasureExample() {
+  const [height, setHeight] = useState(0);
+
+  const measuredRef = useCallback((node) => {
+    if (node !== null) {
+      setHeight(node.getBoundingClientRect().height);
+    }
+  }, []);
+
+  return (
+    <>
+      <h1 ref={measuredRef}>Hello, world</h1>
+      <h2>The above header is {Math.round(height)}px tall</h2>
+    </>
+  );
+}
+```
+
+## References:
+
 - [Can I use javascript to dynamically change a video's source?](https://stackoverflow.com/questions/3732562/can-i-use-javascript-to-dynamically-change-a-videos-source)
 - [Updating source URL on HTML5 video with React](https://stackoverflow.com/questions/41303012/updating-source-url-on-html5-video-with-react)
-
+- [Hooks FAQ](https://legacy.reactjs.org/docs/hooks-faq.html#how-can-i-measure-a-dom-node)
