@@ -113,8 +113,46 @@ function MeasureExample() {
 }
 ```
 
+## Problem 3: TypeError when using reduce
+
+We often need to use reduce to generate new array or object. But most of the time the error: `Element implicitly has an 'any' type because expression of type '*' can't be used to index type '{}'.` appears. Here is the example code. 
+
+```ts
+const a = [1, 2, 3]
+
+const obj = a.reduce((acc, value, index) => {
+  acc[value] = value
+  return acc
+}, {})
+```
+
+At first I solution by adding `as` after `{}` but this is not a good solution since it is kind of ignoring the type checking. And here is other two solution after reading [Array.reduce 的类型你会写吗？](https://juejin.cn/post/7356055073586249779)
+
+### Solution 1: Assign the type of the accumulator
+
+unlike the initial approach, we assign the type of the `acc` to `Record<number, number>`. This will prevent the error from happening.
+
+```ts
+const obj = a.reduce((acc: Record<number, number>, value, index) => {
+  acc[value] = value
+  return acc
+}, {})
+```
+
+### Solution 2: Use the generic type of reduce
+
+This is a more readable way to solve the problem. We can use the generic type of reduce to assign the type of the accumulator.
+
+```ts
+const obj = a.reduce<Record<number, number>>((acc, value, index) => {
+  acc[value] = value
+  return acc
+}, {})
+```
+
 ## References:
 
 - [Can I use javascript to dynamically change a video's source?](https://stackoverflow.com/questions/3732562/can-i-use-javascript-to-dynamically-change-a-videos-source)
 - [Updating source URL on HTML5 video with React](https://stackoverflow.com/questions/41303012/updating-source-url-on-html5-video-with-react)
 - [Hooks FAQ](https://legacy.reactjs.org/docs/hooks-faq.html#how-can-i-measure-a-dom-node)
+- [Array.reduce 的类型你会写吗？](https://juejin.cn/post/7356055073586249779)
