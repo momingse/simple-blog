@@ -16,14 +16,14 @@ Initially, we have the following state:
 ```md
 2 8 3
 1 6 4
-7 \_ 5
+7 _ 5
 ```
 
 The goal state is:
 
 ```md
 1 2 3
-8 \_ 4
+8 _ 4
 7 6 5
 ```
 
