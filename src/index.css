@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 * {
-  font-family: "Ubuntu", sans-serif;
+  /* font-family: "Ubuntu", sans-serif; */
 }
 
 @layer base {
@@ -17,7 +17,7 @@
     @apply text-xl font-bold py-1 my-2 border-b-zinc-100 border-b;
   }
   code {
-    @apply px-1 py-2 text-[0.9em] rounded-lg text-[#5e5e5e] bg-opacity-5 bg-zinc-400;
+    @apply py-2 text-[0.9em] rounded-lg text-[#5e5e5e] bg-opacity-5 bg-zinc-400;
   }
   pre {
     @apply py-6 rounded-3xl;
