@@ -10,7 +10,7 @@ const isProduction = process.env.NODE_ENV === "production";
 const port = process.env.PORT || 5173;
 const base = process.env.BASE || "/";
 
-export async function createServer() {
+export default async function createServer() {
   let vite = null;
   if (!isProduction) {
     vite = await (
