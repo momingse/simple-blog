@@ -10,7 +10,7 @@ const isProduction = process.env.NODE_ENV === "production";
 const port = process.env.PORT || 5173;
 const base = process.env.BASE || "/";
 
-export async function createServer() {
+export default async function createServer() {
   let vite = null;
   if (!isProduction) {
     vite = await (
@@ -59,10 +59,11 @@ export async function createServer() {
     }
   });
 
-  return { app, vite };
+  // return { app, vite };
+  return app;
 }
 
-createServer().then(({ app }) =>
+createServer().then((app) =>
   app.listen(port, () => {
     console.log(`http://localhost:${port}`);
   }),
