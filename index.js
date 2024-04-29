@@ -59,10 +59,11 @@ export async function createServer() {
     }
   });
 
-  return { app, vite };
+  // return { app, vite };
+  return app;
 }
 
-createServer().then(({ app }) =>
+createServer().then((app) =>
   app.listen(port, () => {
     console.log(`http://localhost:${port}`);
   }),
