@@ -7,7 +7,7 @@
     "build:client": "vite build --outDir dist/client",
     "build:server": "vite build --ssr src/server.tsx --outDir dist/server",
     "generate": "vite build --outDir dist/static && npm run build:server && node prerender",
-    "start": "node index",
+    "start": "node index"
   },
   "dependencies": {
     "@types/showdown": "^2.0.6",
