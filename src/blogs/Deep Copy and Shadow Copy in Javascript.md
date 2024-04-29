@@ -300,5 +300,5 @@ This example is a simplified version of the `lodash` source code. The actual sou
 
 References:
 
-- [JavaScript】面试手撕深拷贝](https://juejin.cn/post/7345105799864221737)
+- [【JavaScript】面试手撕深拷贝](https://juejin.cn/post/7345105799864221737)
 - [Lodash source code](https://github.com/lodash/lodash)
