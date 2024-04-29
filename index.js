@@ -2,11 +2,14 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import express from "express";
+import dotenv from "dotenv";
 
+dotenv.config();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const resolve = (p) => path.resolve(__dirname, p);
 const isProduction = process.env.NODE_ENV === "production";
+console.log(process.env.NODE_ENV)
 const port = process.env.PORT || 5173;
 const base = process.env.BASE || "/";
 

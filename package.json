@@ -6,13 +6,12 @@
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build --outDir dist/client",
     "build:server": "vite build --ssr src/server.tsx --outDir dist/server",
-    "build:express": "npm run build && rollup --config rollup.config.js --bundleConfigAsCjs",
     "generate": "vite build --outDir dist/static && npm run build:server && node prerender",
-    "start": "cross-env NODE_ENV=production node index",
     "dev": "node index"
   },
   "dependencies": {
     "@types/showdown": "^2.0.6",
+    "dotenv": "^16.4.5",
     "fzearch": "^1.2.3",
     "highlight.js": "^11.9.0",
     "lucide-react": "^0.323.0",
@@ -21,7 +20,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.0",
-    "rollup": "^4.17.1",
     "tailwind-highlightjs": "^2.0.1"
   },
   "devDependencies": {
