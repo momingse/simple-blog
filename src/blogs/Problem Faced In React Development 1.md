@@ -13,7 +13,7 @@ I was working on a video preview component where it should update the source aft
 
 consider the following code, suppose the `videoUrl` is updated after a new video is uploaded, but the video source is not updated.
 
-```tsx
+```js
 import React, { useState } from "react";
 
 const VideoPreview = ({ videoUrl }) => {
@@ -29,7 +29,7 @@ const VideoPreview = ({ videoUrl }) => {
 
 Since React uses the key to identify the component, we can update the key of the video component to force it to re-render. When we use videoUrl as the key, the video component will re-render when the videoUrl is updated.
 
-```tsx
+```js
 import React, { useState } from "react";
 
 const VideoPreview = ({ videoUrl }) => {
@@ -45,7 +45,7 @@ const VideoPreview = ({ videoUrl }) => {
 
 There is a native way to update the video, which is use the `load()` method of the video element. We can use `useRef` to get the video element and call the `load()` method when the videoUrl is updated.
 
-```tsx
+```js
 import React, { useState, useRef, useEffect } from "react";
 
 const VideoPreview = ({ videoUrl }) => {
@@ -71,7 +71,7 @@ For ssr, if the initial videoUrl is depended on the js code, like different vide
 
 I was working on a component that needs to measure the size of a DOM node. I need to get the width and height of the DOM node after it is rendered. I wrote something like this.
 
-```tsx
+```js
 const MeasureNode = () => {
   const nodeRef = useRef(null);
   const [width, setWidth] = useState(0);
@@ -94,7 +94,7 @@ const MeasureNode = () => {
 
 Since the `nodeRef.current` will not trigger the effect when it is updated, we should use `useCallback` to get the width of the node when the node is updated.
 
-```tsx
+```js
 function MeasureExample() {
   const [height, setHeight] = useState(0);
 
