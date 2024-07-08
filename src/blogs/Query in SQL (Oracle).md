@@ -88,4 +88,4 @@ SELECT rs.Field1
 ## Reference
 
 - [**Paging with Oracle**]([https://stackoverflow.com/questions/241622/paging-with-oracle](https://stackoverflow.com/questions/241622/paging-with-oracle))
-- [**Select top 10 records for each category](**[https://stackoverflow.com/questions/176964/select-top-10-records-for-each-category](https://stackoverflow.com/questions/176964/select-top-10-records-for-each-category))
+- [**Select top 10 records for each category**]([https://stackoverflow.com/questions/176964/select-top-10-records-for-each-category](https://stackoverflow.com/questions/176964/select-top-10-records-for-each-category))

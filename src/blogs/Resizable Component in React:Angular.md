@@ -87,7 +87,7 @@ We can implement this by `HostListener` and `ViewChild` to resize the children c
 
 ```
 
-```tsx
+```js
 import {
   Component,
   ElementRef,
@@ -149,7 +149,7 @@ export class ResizableComponent {
 
 We can use `useRef` to get the size of `Resizable` and use `onMouseDown` to add the listener for resizing.
 
-```tsx
+```js
 import { useRef, useState } from "react";
 
 function App() {
