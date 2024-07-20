@@ -10,6 +10,7 @@
     "start": "node index"
   },
   "dependencies": {
+    "@types/prismjs": "^1.26.4",
     "@types/showdown": "^2.0.6",
     "dotenv": "^16.4.5",
     "fzearch": "^1.2.3",
