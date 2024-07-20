@@ -1,6 +1,9 @@
-import { FC, useEffect, useMemo } from "react";
-import Anchor from "./Anchor";
 import Prism from "prismjs";
+import "prismjs/components/prism-python";
+import "prismjs/components/prism-scss";
+import "prismjs/components/prism-sql";
+import { useEffect, useMemo, useState } from "react";
+import Anchor from "./Anchor";
 
 type BlogTemplateProps = {
   html: string;
