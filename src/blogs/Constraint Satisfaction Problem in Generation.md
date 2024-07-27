@@ -13,7 +13,7 @@ I have watched a video about [Procedural Generation using Constraint Satisfactio
 
 ## Constraint Satisfaction with one solution: Sudoku
 
-First, we may start with simple question with can be solve and even have only one solution like Sudoku. 
+First, we may start with simple question with can be solve and even have only one solution like Sudoku.
 
 - Variable: Sudoku 9x9 map
 - Domain: 1-9
@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
 ## Constraint Satisfaction with multiple solution
 
-### Map Generation
+### Map Generation with minimun conflict algorithm
 
 The idea of this is utilizing the minimun conflict algorithm to find the local solution. Since we bring randomness to the algorithm, we can find multiple solution which is good for map generation.
 
@@ -181,162 +181,249 @@ if __name__ == '__main__':
     print_map(map)
 ```
 
-### Maze Generation
+### Map Generation with backtracking algorithm
 
-- Variable: 2D maze
-- Domain: Wall or path
-- Constraint: there should be at least one path from start to end and all path should be connected
+Sometimes we dun want any conflict but we still want to bring the randomness to the map. The backtracking algorithm can be used to find the solution.
+
+- Variable: 2D map
+- Domain: block type which restrict by neighbour's block type
+  ```
+  e.g. Block 3 cannot please at the right hand side of Block 1 and Block 2
+           ###           # #         ###
+  Block 1:       Block 2:    Block 3:#
+           ###           ###         # #
+  ```
+- Constraint: block type do not conflict with neighbour
+
+````py
+- Constraint: block type do not conflict with neighbour
 
 ```py
+import enum
+from typing import Dict, List
 import numpy as np
-import random
+
+class BlockType(enum.IntEnum):
+    EMPTY = 0
+    BLOCK1 = 1
+    BLOCK2 = 2
+    BLOCK3 = 3
+    BLOCK4 = 4
+    BLOCK5 = 5
+    BLOCK6 = 6
+    BLOCK7 = 7
+    Block8 = 8
+    Block9 = 9
+    Block10 = 10
+    BLOCK11 = 11
 
 
-class BlockType:
-    PATH = 0
-    WALL = 1
-    START = 2
-    END = 3
+class Direction(enum.IntEnum):
+    NORTH = 0
+    EAST = 1
+    SOUTH = 2
+    WEST = 3
+
+rules: Dict[BlockType, List[Direction]] = {
+    BlockType.BLOCK1: [Direction.WEST, Direction.EAST],
+    BlockType.BLOCK2: [
+        Direction.NORTH,
+        Direction.EAST,
+        Direction.SOUTH,
+        Direction.WEST,
+    ],
+    BlockType.BLOCK3: [Direction.EAST, Direction.SOUTH, Direction.WEST],
+    BlockType.BLOCK4: [Direction.NORTH, Direction.EAST, Direction.WEST],
+    BlockType.BLOCK5: [Direction.NORTH, Direction.SOUTH],
+    BlockType.BLOCK6: [Direction.NORTH, Direction.EAST, Direction.SOUTH],
+    BlockType.BLOCK7: [Direction.NORTH, Direction.WEST, Direction.SOUTH],
+    BlockType.Block8: [Direction.NORTH, Direction.EAST],
+    BlockType.Block9: [Direction.NORTH, Direction.WEST],
+    BlockType.Block10: [Direction.SOUTH, Direction.WEST],
+    BlockType.BLOCK11: [Direction.EAST, Direction.SOUTH],
+}
+
+block_type_to_string = {
+    BlockType.EMPTY: ['###', '###', '###'],
+    BlockType.BLOCK1: ['###', '   ', '###'],
+    BlockType.BLOCK2: ['# #', '   ', '# #'],
+    BlockType.BLOCK3: ['###', '   ', '# #'],
+    BlockType.BLOCK4: ['# #', '   ', '###'],
+    BlockType.BLOCK5: ['# #', '# #', '# #'],
+    BlockType.BLOCK6: ['# #', '#  ', '# #'],
+    BlockType.BLOCK7: ['# #', '  #', '# #'],
+    BlockType.Block8: ['# #', '#  ', '###'],
+    BlockType.Block9: ['# #', '  #', '###'],
+    BlockType.Block10: ['###', '  #', '# #'],
+    BlockType.BLOCK11: ['###', '#  ', '# #'],
+}
+
+direction_to_coordinate_change = {
+    Direction.NORTH: (-1, 0),
+    Direction.EAST: (0, 1),
+    Direction.SOUTH: (1, 0),
+    Direction.WEST: (0, -1),
+}
+
+choosalbe_blocks = list(filter(lambda x: x != BlockType.EMPTY, BlockType))
 
 
-def generator(width, height, max_iter, start, end):
-    maze, init_path_x, init_path_y = init_maze(width, height)
-    maze[start] = BlockType.START
-    maze[end] = BlockType.END
-    possible_path = get_neighbour(width, height, init_path_x, init_path_y)
-    possible_path = [
-        (x, y) for x, y in possible_path if maze[x, y] == BlockType.WALL
-    ]
+def generate_map(
+    width, height
+) -> np.ndarray[BlockType, np.dtype[np.int8]] | None:
+    x, y = np.random.randint(0, height), np.random.randint(0, width)
+    map = np.full((height, width), BlockType.EMPTY)
+    if assign_block(map, x, y, np.random.choice(choosalbe_blocks)):
+        return map
 
-    for _ in range(max_iter):
-        if not possible_path:
-            break
-        best_path = None
-        min_conflict = np.inf
-        for _ in range(len(possible_path)):
-            x, y = random.choice(possible_path)
-            maze[x, y] = BlockType.PATH
-            conflict = conflict_calucator(maze, x, y, start, end)
-            if conflict < min_conflict:
-                best_path, min_conflict = (x, y), conflict
-            maze[x, y] = BlockType.WALL
-
-        if best_path is not None:
-            x, y = best_path
-            maze[x, y] = BlockType.PATH
-            neighbour = get_neighbour(width, height, x, y)
-            neighbour = [
-                (nx, ny)
-                for nx, ny in neighbour
-                if maze[nx, ny] == BlockType.WALL
-                and (nx, ny) not in possible_path
-            ]
-            possible_path.remove(best_path)
-            possible_path.extend(neighbour)
-
-    return maze
+    print('Failed to generate map')
+    return None
 
 
-def conflict_calucator(maze, x, y, start, end):
-    conflict = 0
-    # check if there is no path from start to end
-    conflict += 0 if solve_maze(maze, start, end) else 1
+def assign_block(map, x, y, block):
+    map[x][y] = block
 
-    # check 3 x 3 block if there are more than 3 PATH
-    next_to_wall = (
-        x == 0 or x == maze.shape[0] - 1 or y == 0 or y == maze.shape[1] - 1
-    )
-    grid = maze[
-        max(0, x - 1) : min(maze.shape[0], x + 2),
-        max(0, y - 1) : min(maze.shape[1], y + 2),
-    ]
-    conflict += np.sum(grid == BlockType.PATH) > 4 - next_to_wall
-
-    # check if neighbour is alone WALL
-    neighbour = get_neighbour(maze.shape[1], maze.shape[0], x, y)
-    hv_alone = False
-    for nx, ny in neighbour:
+    is_conflict = False
+    for direction, neighbour in get_neighbour(map, x, y).items():
+        if neighbour is None:
+            continue
+        if neighbour == BlockType.EMPTY:
+            continue
+        relative_direction = (direction.value + 2) % 4
         if (
-            maze[nx, ny] == BlockType.WALL
-            and np.sum(
-                get_neighbour(maze.shape[1], maze.shape[0], nx, ny)
-                == BlockType.WALL
-            )
-            == 0
+            direction in rules[block]
+            and Direction(relative_direction) not in rules[neighbour]
         ):
-            hv_alone = True
+            is_conflict = True
             break
-    conflict += 1 if hv_alone else 0
+        if (
+            direction not in rules[block]
+            and Direction(relative_direction) in rules[neighbour]
+        ):
+            is_conflict = True
+            break
 
-    # if neighbour more PATH than WALL
-    conflict += np.sum(grid == BlockType.PATH) + 1 > np.sum(grid == BlockType.WALL)
+    if is_conflict:
+        map[x][y] = BlockType.EMPTY
+        return False
 
-    return conflict
+    valid_step = True
+    shuffled_directions = np.random.permutation(list(Direction))
+    shuffled_blocks = np.random.permutation(choosalbe_blocks)
+    for possible_direction in shuffled_directions:
+        dx, dy = direction_to_coordinate_change[possible_direction]
+        if (
+            not validate_position(map, x + dx, y + dy)
+            or map[x + dx][y + dy] != BlockType.EMPTY
+        ):
+            continue
 
+        valid_direction = False
+        for shuffled_block in shuffled_blocks:
+            if assign_block(map, x + dx, y + dy, shuffled_block):
+                valid_direction = True
+                break
 
-def solve_maze(maze, start, end):
-    path = [start]
-    height, width = maze.shape
-    visited = np.zeros((height, width), dtype=bool)
-    visited[start] = True
+        if not valid_direction:
+            valid_step = False
+            map[x + dx][y + dy] = BlockType.EMPTY
+            break
+    if not valid_step:
+        map[x][y] = BlockType.EMPTY
+        return False
 
-    while path:
-        if end in path:
-            return True
-        temp_path = []
-        for x, y in path:
-            for nx, ny in get_neighbour(width, height, x, y):
-                if (
-                    maze[nx, ny] == BlockType.PATH
-                    or maze[nx, ny] == BlockType.END
-                ) and not visited[nx, ny]:
-                    visited[nx, ny] = True
-                    temp_path.append((nx, ny))
-        path = temp_path
-    return False
-
-
-def get_neighbour(width, height, x, y):
-    directions = np.array([(0, 1), (0, -1), (1, 0), (-1, 0)])
-    neighbour = directions + np.array([x, y])
-    valid_neighbour = (
-        (neighbour[:, 0] >= 0)
-        & (neighbour[:, 0] < height)
-        & (neighbour[:, 1] >= 0)
-        & (neighbour[:, 1] < width)
-    )
-    return [tuple(n) for n in neighbour[valid_neighbour]]
+    return True
 
 
-def init_maze(width, height):
-    maze = np.full((height, width), BlockType.WALL)
-    init_path_x, init_path_y = height // 2, width // 2
-    maze[init_path_x, init_path_y] = BlockType.PATH
-    return maze, init_path_x, init_path_y
-
-
-def print_maze(maze):
-    block2emoji = {
-        BlockType.WALL: '🟫',
-        BlockType.PATH: '🟩',
-        BlockType.START: '🟦',
-        BlockType.END: '🟥',
+def get_neighbour(map, x, y) -> Dict[Direction, BlockType | None]:
+    neighbours = {
+        Direction.NORTH: map[x - 1][y]
+        if validate_position(map, x - 1, y)
+        else None,
+        Direction.EAST: map[x][y + 1]
+        if validate_position(map, x, y + 1)
+        else None,
+        Direction.SOUTH: map[x + 1][y]
+        if validate_position(map, x + 1, y)
+        else None,
+        Direction.WEST: map[x][y - 1]
+        if validate_position(map, x, y - 1)
+        else None,
     }
 
-    for x in range(maze.shape[0]):
-        print(''.join([block2emoji[maze[x, y]] for y in range(maze.shape[1])]))
+    return neighbours
+
+
+def validate_position(map, x, y):
+    return 0 <= x < len(map) and 0 <= y < len(map[0])
+
+
+# map is a 2D array of BlockType
+def print_map(map: np.ndarray[BlockType, np.dtype[np.int8]]) -> None:
+    print('+' + '-' * (len(map[0]) * 3) + '+')
+    for row in map:
+        print('|', end='')
+        for block in row:
+            print(block_type_to_string[block][0], end='')
+        print('|', end='')
+        print()
+        print('|', end='')
+        for block in row:
+            print(block_type_to_string[block][1], end='')
+        print('|', end='')
+        print()
+        print('|', end='')
+        for block in row:
+            print(block_type_to_string[block][2], end='')
+        print('|', end='')
+        print()
+    print('+' + '-' * (len(map[0]) * 3) + '+')
 
 
 if __name__ == '__main__':
-    width, height = 20, 20
-    start = (0, 0)
-    end = (width - 1, height - 1)
-    maze = generator(width, height, 220, start, end)
-    print_maze(maze)
+    width = 20
+    height = 10
+    map = generate_map(width, height)
+    if map is not None:
+        print_map(map)
+````
+
+Here is one of the output. In this algorithm, there are 3 places that brings randomness. First, the starting point of the map. Second, choosing of direction Third, the order of choosing block type.
+
+```txt
++------------------------------------------------------------+
+|# ## ## ######## ## ## ## ## ########### ## ## ## ## ## ## #|
+|# ##    ##    ##    ## ## ##                ## ##    ##     |
+|# ## ##### ## ######## ## ##### ## ##### ##### ## ##########|
+|# ## ##### ## ######## ## ##### ## ##### ##### ## ##########|
+|#       ## ##          ##       ##                ##    ##  |
+|####### ## ## ##### ## ## ## ## ##### ########### ## ## ## #|
+|####### ## ## ##### ## ## ## ## ##### ########### ## ## ## #|
+|     ## ##    ##       ##    ##             ##          ## #|
+|# ## ## ######## ## ############## ## ## ## ## ##### ##### #|
+|# ## ## ######## ## ############## ## ## ## ## ##### ##### #|
+|  ## ##    ##    ##             ##          ##          ##  |
+|#### ## ## ## ## ## ######## ## ########### ##### ##### ####|
+|#### ## ## ## ## ## ######## ## ########### ##### ##### ####|
+|                       ##             ##       ## ##        |
+|####### ######## ## ## ## ## ## ##### ## ## ## ## ## ## ## #|
+|####### ######## ## ## ## ## ## ##### ## ## ## ## ## ## ## #|
+|  ##    ##    ##    ## ##    ##    ##    ##    ##       ##  |
+|# ## ## ## ## ## ##### ## ##### ## #################### ####|
+|# ## ## ## ## ## ##### ## ##### ## #################### ####|
+|     ## ##       ##    ##       ##    ##                ##  |
+|# ## ## ## ## ## ## ########### ## ## ## ##### ## ## ## ## #|
+|# ## ## ## ## ## ## ########### ## ## ## ##### ## ## ## ## #|
+|  ##       ## ## ##    ##          ##    ##    ##    ## ## #|
+|# ## ## ## ## ## ##### ## ## ## ## ## ## ## ## ######## ## #|
+|# ## ## ## ## ## ##### ## ## ## ## ## ## ## ## ######## ## #|
+|#    ##    ##             ##    ## ##    ## ##             #|
+|####### ##### ## ############## ## ######## ##### ## ## ## #|
+|####### ##### ## ############## ## ######## ##### ## ## ## #|
+|  ##          ##          ##    ##                ##        |
+|# ## ##### ##### ## ## ## ## ## ##### ## ##### ##### ## ## #|
++------------------------------------------------------------+
 ```
-
-You can bring randomness by adding random initial start or diff constraint. And all of those will affect the result. However, it is required lots of computation to find the solution so sometimes using other searching algorithm is suggested.
-
 
 ## Reference
 
