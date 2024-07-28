@@ -10,6 +10,7 @@ type CheckFunc<T> = () => T;
 type UseObserver = <T>(
   type: keyof WindowEventMap,
   checkFunc: CheckFunc<T>,
+  depancies?: any[],
 ) => Observer<T>;
 
 type Observer<T> = {
@@ -21,6 +22,7 @@ type UseEventListener = <T extends AcceptType>(
   type: keyof WindowEventMap,
   checkFunc: CheckFunc<T>,
   initialValue?: T,
+  dependencies?: any[],
 ) => T | null;
 
 type SubscribeFunc<T> = (returnValue: T) => void;
@@ -28,7 +30,11 @@ type SubscribeFunc<T> = (returnValue: T) => void;
 const useObserver: UseObserver = <T>(
   type: SubscribeType,
   checkFunc: CheckFunc<T>,
+  dependencies?: any[],
 ) => {
+  const _dependencies = dependencies
+    ? [type, ...dependencies.map((dep) => JSON.stringify(dep))]
+    : [type];
   return useMemo(() => {
     let listenerFunc = null;
     return {
@@ -43,17 +49,18 @@ const useObserver: UseObserver = <T>(
         window.removeEventListener(type, listenerFunc!);
       },
     };
-  }, []);
+  }, _dependencies);
 };
 
 const useEventListener: UseEventListener = <T extends AcceptType>(
   type: SubscribeType,
   checkFunc: CheckFunc<T>,
   initialValue?: T,
+  dependencies?: any[],
 ) => {
   const forceUpdate = useForceUpdate();
   const returnRef = useRef<T | null>(initialValue ?? null);
-  const observer = useObserver<T>(type, checkFunc);
+  const observer = useObserver<T>(type, checkFunc, dependencies);
 
   useIsomorphicLayoutEffect(() => {
     observer.subscribe((returnValue) => {
@@ -64,7 +71,7 @@ const useEventListener: UseEventListener = <T extends AcceptType>(
       returnRef.current = returnValue;
     });
     return () => observer.unsubscribe();
-  }, []);
+  }, [observer]);
 
   return returnRef.current;
 };
