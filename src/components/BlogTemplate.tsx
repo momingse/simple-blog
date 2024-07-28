@@ -2,38 +2,40 @@ import Prism from "prismjs";
 import "prismjs/components/prism-python";
 import "prismjs/components/prism-scss";
 import "prismjs/components/prism-sql";
-import { useEffect, useMemo, useState } from "react";
-import Anchor from "./Anchor";
+import { FC, useEffect, useRef, useState } from "react";
+import Anchor, { Item } from "./Anchor";
 
 type BlogTemplateProps = {
   html: string;
-  headingId: {
-    level: 2 | 3;
-    id: string;
-  }[];
 };
 
-const BlogTemplate: FC<BlogTemplateProps> = ({ html, headingId }) => {
+const BlogTemplate: FC<BlogTemplateProps> = ({ html }) => {
+  const [items, setItems] = useState<Item[]>([]);
+  const blogRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     Prism.highlightAll();
   }, []);
 
-  const items = useMemo(() => {
-    return headingId.map(({ id, level }) => {
-      const title = decodeURI(id.replace(/---\d+$/, ""));
-      return {
-        id,
-        title,
-        level,
-      };
+  useEffect(() => {
+    if (!blogRef.current) return;
+    const headings = blogRef.current.querySelectorAll("h2, h3");
+    const items: Item[] = [];
+    headings.forEach((heading) => {
+      const level = heading.tagName === "H2" ? 2 : 3;
+      const id = heading.textContent!.replace(/ /g, "-") + `---${items.length}`;
+      heading.id = id;
+      items.push({ title: heading.textContent!, id, level });
     });
-  }, [headingId]);
+    setItems(items);
+  }, [])
 
   return (
     <div className="w-full">
       <div className="m-auto md:flex justify-center">
         <div className="hidden lg:block mr-2 w-44" />
         <div
+          ref={blogRef}
           id="blog"
           className="max-w-[666px]"
           dangerouslySetInnerHTML={{ __html: html }}
@@ -42,7 +44,6 @@ const BlogTemplate: FC<BlogTemplateProps> = ({ html, headingId }) => {
           <Anchor
             items={items}
             className="sticky top-10 text-zinc-600 text-xs overflow-hidden whitespace-nowrap text-ellipsis"
-            key={items[0].id}
           />
         </div>
       </div>
