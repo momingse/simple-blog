@@ -16,7 +16,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ projectInfo }) => {
         className="block m-auto max-w-[666px] py-2 px-6 cursor-pointer bg-[#fafafa] rounded-xl text-zinc-500 hover:text-zinc-800 shadow-lg hover:border border-gray-200 md:flex"
       >
         <div className="mb-3 md:p-5">
-          <img src={`/assets/${image}`} />
+          <img src={`/assets/${image}`} className="max-w-48"/>
         </div>
         <div className="md:p-5">
           <div className="text-xl md:text-2xl pb-2">{name}</div>
