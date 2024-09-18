@@ -56,7 +56,15 @@ Project.getInitialProps = () => {
           "ssg",
           "vite",
         ],
-        image: "project1.png",
+        image: "simple-blog.png",
+      },
+      {
+        html_url: "https://github.com/momingse/KTodo",
+        description:
+          "Kanban like todo website managing your tasks in Kanban board",
+        name: "KTodo",
+        tags: ["react", "typescript", "kanban-board", "tailwindcss"],
+        image: "ktodo.jpeg",
       },
     ] as ProjectInfo[],
   };
