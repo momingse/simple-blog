@@ -143,7 +143,7 @@ The basice concept is:
 3. loop through the properties of the original object or array
 4. call the function recursively to copy the properties
 
-The following is reference to [JavaScript】面试手撕深拷贝](https://juejin.cn/post/7345105799864221737)
+The following is reference to [【JavaScript】面试手撕深拷贝](https://juejin.cn/post/7345105799864221737)
 
 ```javascript
 const _ = require('lodash');
