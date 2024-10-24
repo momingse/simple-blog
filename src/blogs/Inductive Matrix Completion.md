@@ -30,7 +30,7 @@ We want to predict which item_id should be recommended to each user_id, which is
 
 ## IMC
 
-we want to achieve something like this $r_{ij} = x^{T}_{i}Qy_{j}$. Where i refer to $user_i$ and j refer to $item_j$. Here we want train a matrix Q to learn the feature pattern. (Reference explaintion from [INDUCTIVE MATRIX COMPLETION BASED ON GRAPH  NEURAL NETWORKS](https://arxiv.org/abs/1904.12058))
+we want to achieve something like this $r_{ij} = x^{T}_{i}My_{j}$. Where i refer to $user_i$ and j refer to $item_j$. Here we want train a matrix M to learn the feature pattern. (Reference explaintion from [INDUCTIVE MATRIX COMPLETION BASED ON GRAPH  NEURAL NETWORKS](https://arxiv.org/abs/1904.12058))
 
 
 ## Example
@@ -60,7 +60,7 @@ Image now the table is like:
 
 ### Import library
 
-We will use sklearn to prepare the data and torch to train the matrix Q
+We will use sklearn to prepare the data and torch to train the matrix M
 
 ```py
 import numpy as np
