@@ -1,5 +1,4 @@
-# Chat With PDF Locally using llamaIndex, llamaCPP, lanceDB and MinerU 1.0
-
+# Chat With PDF Locally using llamaIndex, llamaCPP, lanceDB and MinerU
 ---
 
 date: 11/01/2025
