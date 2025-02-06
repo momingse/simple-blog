@@ -137,12 +137,70 @@ query_engine = index.as_query_engine()
 response = self.query_engine.query(query)
 ```
 
-## Space for Future Improvement
+## Improvement  
 
-1. Reranking: The retrieval part can greatly affect the search result and processing time. With reranking, we can filter out the irrelevant results, reducing the computation time and improving the search result.
+This is only a rough sketch, and there is still a lot to improve. From the paper *[Enhancing Retrieval-Augmented Generation: A Study of Best Practices](https://arxiv.org/abs/2501.07391)*, it mentions that some practices may improve performance. The study examines model size, prompt design, document size, knowledge base size, retrieval stride, query expansion, multilingual capabilities, and focus models (reranking sentences from retrieved documents). The results show that different datasets, depending on whether they involve open-ended or closed-ended questions, yield different performances. Here, we summarize some best practices for open-ended questions, which are particularly useful for this application.  
 
-2. Model Selection: Currently, most of the models are just some of the popular models. We can try to use some other SOTA models where our ultimate goal is to get the best performance while keeping the computational cost minimal, for example, using small models.
+- **Larger Model Size**: Comparing MistralAI 7B and 45B, the 45B model performs better than the 7B model.  
 
-3. Prompt Optimization: The prompt is copied from Qwen2.5 docs, so it can be improved, allowing the LLM to elaborate more.
+- **Prompt Design**: Proper role design, such as defining the model as a QA bot, along with few-shot examples that include both correct and incorrect answers, improves performance.  
 
-4. Mix Retrieval Strategy: There are three types of question types. One is a simple question that does not need any retrieval. The second is a simple question that needs retrieval. The third is a complex question that needs recursive retrieval. We can try to mix them together for a better response.
+- **Query Expansion**: Slight performance improvement, possibly because most relevant documents can already be retrieved without query expansion.  
+
+- **Focus Model**: Splitting and reranking sentences from retrieved documents improves performance. However, retrieving too many documents or including too many sentences can reduce effectiveness.  
+
+Keep in mind that closed-ended questions may yield different results. Some implementations are discussed in the paper.  
+
+### Prompt Design  
+
+The most straightforward prompt design technique is **role-playing**, which is the simplest way to improve performance. According to the paper, correct role assignment enhances performance, while incorrect or irrelevant role assignment can degrade it. Even minor rephrasings or sentence structure variations can affect results. Here is an example from the paper that performed the worst for relevant prompts on closed-ended questions:  
+
+```md  
+You are a truthful expert question-answering bot and should correctly and concisely answer the following question.  
+```
+
+The second technique, **few-shot learning**, requires more adjustments. The most challenging part is choosing high-quality examples. Using only positive examples can harm performance, even when increasing the number of examples. However, including both one positive and one negative example significantly improves results. The difficulty lies in selecting suitable few-shot examples, as adjustments are not straightforward. Here is an example from the paper that performs well for both open-ended and closed-ended questions:  
+
+```md  
+Considering these examples:  
+Question: q, Correct Answer: correct_answer.  
+Question: q, Incorrect Answer: incorrect_answer.  
+Question: {your_question}, Correct Answer:  
+```  
+
+### Reranking  
+
+Unlike the paper, we focus on a small piece of the document. We apply reranking after retrieving relevant chunked data. However, retrieving everything is not necessary. According to the article *[Implementing Small Language Models (SLMs) with RAG on Embedded Devices Leading to Cost Reduction, Data Privacy, and Offline Use](https://deepsense.ai/blog/implementing-small-language-models-slms-with-rag-on-embedded-devices-leading-to-cost-reduction-data-privacy-and-offline-use/)*, a better retrieval model reduces the need to retrieve many chunks. The improvement in mAP decreases when retrieving more than three chunks of data.  
+
+Additionally, the data we retrieve comes from user-uploaded files, which may contain incorrect formatting or ordering when converted from PDFs to Markdown. The rerank model is applied to handle unclean data sources. Here’s how to apply it using LlamaIndex:  
+
+```python  
+from llama_index.core import VectorStoreIndex  
+from llama_index.core.postprocessor import SentenceTransformerRerank  
+import torch  
+
+# Initialize the index  
+index = VectorStoreIndex.from_vector_store(  
+    # some config  
+)  
+
+# Initialize the rerank model  
+rerank_model_name = "some rerank model name from Hugging Face"  
+device = "cuda" if torch.cuda.is_available() else "cpu"  
+rerank = SentenceTransformerRerank(  
+    model=rerank_model_name,  
+    top_n=3,  
+    device=device  
+)  
+
+query_engine = index.as_query_engine(  
+    similarity_top_k=10,  
+    node_postprocessors=[rerank],  
+    streaming=True  # Enable streaming for a faster initial response  
+)  
+```
+
+## Reference
+
+- [Enhancing Retrieval-Augmented Generation: A Study of Best Practices](https://arxiv.org/abs/2501.07391)
+- [Implementing Small Language Models (SLMs) with RAG on Embedded Devices Leading to Cost Reduction, Data Privacy, and Offline Use](https://deepsense.ai/blog/implementing-small-language-models-slms-with-rag-on-embedded-devices-leading-to-cost-reduction-data-privacy-and-offline-use/)
