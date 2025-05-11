@@ -64,7 +64,14 @@ Project.getInitialProps = () => {
           "Kanban like todo website managing your tasks in Kanban board",
         name: "KTodo",
         tags: ["react", "typescript", "kanban-board", "tailwindcss"],
-        image: "ktodo.jpeg",
+        image: "ktodo.png",
+      },
+      {
+        html_url: "https://github.com/momingse/bomb-man",
+        description: "Bomb man game built with React, Express and Socket.io",
+        name: "Bomb Man",
+        tags: ["react", "typescript", "expressjs", "socket.io"],
+        image: "bomb-man.png",
       },
     ] as ProjectInfo[],
   };
