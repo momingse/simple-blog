@@ -7,7 +7,7 @@
     "build:client": "vite build --outDir dist/client",
     "build:server": "vite build --ssr src/server.tsx --outDir dist/server",
     "generate": "vite build --outDir dist/static && npm run build:server && node prerender",
-    "start": "node index"
+    "dev": "node index"
   },
   "dependencies": {
     "@types/prismjs": "^1.26.4",
