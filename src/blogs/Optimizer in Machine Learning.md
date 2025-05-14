@@ -33,9 +33,11 @@ def gradient(x, y):
 Consider you have gradient of the loss function in current point, you can update the parameter by moving in the opposite direction of the gradient by some step size. Here step size is called learning rate. That's how gradient descent works. And we can control the batch size to control the noise of the gradient so we can have mini-batch gradient descent, full-batch gradient descent and stochastic gradient descent(SGD).
 
 Here is the equation of gradient descent:
+
 $$
 x_{t+1} = x_t - \eta \nabla f(x_t)
 $$
+
 where $\eta$ is the learning rate and $\nabla f(x_t)$ is the gradient of the function at point $x_t$.
 
 ```py
@@ -75,6 +77,7 @@ Epochs needed: 79
 What if we want to speed up the convergence? We can use momentum. The idea is to keep track of the previous gradients and use them to update the parameters. We will speed up when the gradient is consistent and slow down when the gradient is oscillating. 
 
 The equation of momentum is:
+
 $$
 v_{t+1} = \beta v_t + (1 - \beta) \nabla f(x_t) \\
 x_{t+1} = x_t - \eta v_{t+1}
@@ -85,6 +88,7 @@ where $v_t$ is the velocity at time $t$ and $\beta$ is the momentum coefficient.
 We may add a lookahead term to the momentum. The idea is to use the momentum to predict where the next point will be and then calculate the gradient at that point. This is called Nesterov momentum.
 
 The equation of Nesterov momentum is:
+
 $$
 v_{t+1} = \beta v_t + (1 - \beta) \nabla f(x_t + \beta v_t) \\
 x_{t+1} = x_t - \eta v_{t+1}
@@ -130,6 +134,7 @@ The point get closer to the minimum faster then sgd. But due to the momentum, it
 Can we enlarge the step size when the gradient is small and reduce the step size when the gradient is large? Yes, we can. We track the sum of the squares of the gradients and use it to scale the learning rate. This is how AdaGrad works.
 
 The equation of AdaGrad is:
+
 $$
 v_{t+1} = v_t + \nabla f(x_t)^2 \\
 x_{t+1} = x_t - \frac{\eta}{\sqrt{v_{t+1}}} \nabla f(x_t)
@@ -140,6 +145,7 @@ where $v_t$ is the sum of the squares of the gradients at time $t$.
 And as the final optimizer in this blog, we want to combine all the ideas including momentum and AdaGrad. This is how Adam works.
 
 The equation of Adam is:
+
 $$
 m_{t+1} = \beta_1 m_t + (1 - \beta_1) \nabla f(x_t) \\
 v_{t+1} = \beta_2 v_t + (1 - \beta_2) \nabla f(x_t)^2 \\
