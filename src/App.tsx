@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
 import BlogTemplate from "./components/BlogTemplate";
 import { marked } from "marked";
+import markedKatex from "marked-katex-extension";
 
 type RouteInfo = {
   name: string;
@@ -28,7 +29,22 @@ export const blogsInfo = Object.entries(blogsInMD).map(([key, value]) => {
   const mdValue = match
     ? value.default.replace(match.at(0), "")
     : value.default;
+
   const html = marked
+    .use(
+      markedKatex({
+        nonStandard: true,
+        throwOnError: false, // Don't throw on parse errors
+        errorColor: "#FF0000", // Highlight errors in red
+        displayMode: false, // Inline mode by default
+        output: "html", // Output format
+        delimiters: [
+          // Try different delimiters if needed
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+        ],
+      }),
+    )
     .use({
       renderer: {
         heading(text, level, raw) {
