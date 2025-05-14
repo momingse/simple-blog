@@ -34,7 +34,7 @@ const blogsToPrereneder = fs
     console.log("pre-rendered:", filePath);
   }
 
-  fs.mkdirSync(toAbsolute("dist/static/blog", { recursive: true }));
+  fs.mkdirSync(toAbsolute("dist/static/blog"), { recursive: true });
   for (const url of blogsToPrereneder) {
     const appHtml = render(url);
 
