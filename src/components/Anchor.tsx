@@ -1,14 +1,10 @@
-import {
-  FC,
-  HTMLProps,
-  useCallback,
-} from "react";
+import { FC, HTMLProps, useCallback } from "react";
 import useEventListener from "../util/hook/useEventListener";
 import { classNameCombiner } from "../util/helper";
 
 const ADJUST_PX = 20;
 
-type Item = {
+export type Item = {
   title: string;
   id: string;
   level: 2 | 3;
@@ -24,22 +20,27 @@ const Anchor: FC<AnchorProps> = ({ className, items }) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const getElementTopList = useCallback(() => {
+  const getElementTopList = () => {
     return items.map((item) => {
       const element = document.getElementById(item.id);
       if (!element)
         throw new Error(`Anchor cannot find element with id ${item.id}`);
       return element.offsetTop - ADJUST_PX;
     });
-  }, [items]);
+  };
 
-  const scrollProgress = useEventListener("scroll", () => {
-    const elementTopList = getElementTopList();
-    for (let i = 0; i < elementTopList.length; i++) {
-      if (elementTopList[i] > window.scrollY) return i;
-    }
-    return elementTopList.length;
-  }, 0);
+  const scrollProgress = useEventListener(
+    "scroll",
+    () => {
+      const elementTopList = getElementTopList();
+      for (let i = 0; i < elementTopList.length; i++) {
+        if (elementTopList[i] > window.scrollY) return i;
+      }
+      return elementTopList.length;
+    },
+    0,
+    [items],
+  );
 
   return (
     <div className={classNameCombiner(className, "flex")}>
@@ -61,8 +62,7 @@ const Anchor: FC<AnchorProps> = ({ className, items }) => {
                 scrollProgress && scrollProgress - 1 === index
                   ? "text-sky-500"
                   : null,
-                item.level === 2
-                  ? "pl-0": "pl-3"
+                item.level === 2 ? "pl-0" : "pl-3",
               )}
               onClick={() => scrollToId(item.id)}
             >

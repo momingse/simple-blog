@@ -19,7 +19,7 @@ const BlogCard: FC<BlogCardProps> = ({ date, topics, name, to }) => {
         <span className="text-sm text-zinc-400">{date}</span>
         <span className="text-sm text-zinc-400 sm:pl-4 sm:inline-flex flex gap-2">
           {topics.map((topic) => (
-            <span key={topic}>{topic}</span>
+            <span key={topic}>{topic.replace(/_/g, "-")}</span>
           ))}
         </span>
       </Link>

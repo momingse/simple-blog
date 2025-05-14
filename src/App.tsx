@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
 import BlogTemplate from "./components/BlogTemplate";
 import { marked } from "marked";
+import markedKatex from "marked-katex-extension";
 
 type RouteInfo = {
   name: string;
@@ -24,13 +25,26 @@ export const blogsInfo = Object.entries(blogsInMD).map(([key, value]) => {
   const match = regex.exec(value.default);
   const date = match?.at(1) || "";
   const topics = match?.at(2)?.split(" ") || [];
-  // const name = key.match(/\.\/blogs\/(.*)\.md$/)![1];
   let name;
   const mdValue = match
     ? value.default.replace(match.at(0), "")
     : value.default;
-  const id: { level: 2 | 3; id: string }[] = [];
+
   const html = marked
+    .use(
+      markedKatex({
+        nonStandard: true,
+        throwOnError: false, // Don't throw on parse errors
+        errorColor: "#FF0000", // Highlight errors in red
+        displayMode: false, // Inline mode by default
+        output: "html", // Output format
+        delimiters: [
+          // Try different delimiters if needed
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+        ],
+      }),
+    )
     .use({
       renderer: {
         heading(text, level, raw) {
@@ -38,41 +52,26 @@ export const blogsInfo = Object.entries(blogsInMD).map(([key, value]) => {
             name = raw;
             return `<h1>${raw}</h1>`;
           }
-          if (level == 2) {
-            const encodeRaw = encodeURI(raw) + `---${id.length}`;
-            const html = `<h2 id=${encodeRaw}>${raw}</h2>`;
-            id.push({ level, id: encodeRaw });
-
-            return html;
-          }
-          if (level == 3) {
-            const encodeRaw = encodeURI(raw) + `---${id.length}`;
-            const html = `<h3 id=${encodeRaw}>${raw}</h3>`;
-            id.push({ level, id: encodeRaw });
-
-            return html;
-          }
           return false;
         },
       },
     })
-    .parse(mdValue);
+    .parse(mdValue, { async: false }) as string;
 
   return {
     date,
     topics,
-    name,
+    name: name ?? key.match(/\.\/blogs\/(.*)\.md$/)![1],
     html,
-    id,
   };
 });
 
-const blogsRoutes = blogsInfo.map(({ name, html, id }) => {
+const blogsRoutes: RouteInfo[] = blogsInfo.map(({ name, html }) => {
   return {
     name,
     path: `/blog/${name}`,
-    component: <BlogTemplate html={html} headingId={id} />,
-  } as RouteInfo;
+    component: <BlogTemplate html={html} />,
+  };
 });
 
 const routesOrder: Readonly<{ [key: string]: number }> = Object.freeze({
