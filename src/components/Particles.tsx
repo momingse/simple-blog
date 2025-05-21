@@ -78,6 +78,7 @@ const Particles: FC<ParticlesProps> = ({
   }, [maxNumOfParticles, numOfGrids, withNodesConnection]);
 
   const render = useCallback(() => {
+    const startTime = Date.now();
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -156,7 +157,7 @@ const Particles: FC<ParticlesProps> = ({
     const wdirs = Array.from(
       {
         length:
-          Math.floor(minDistanceForConnection / gridSizeRef.current.width) + 1,
+          Math.ceil(minDistanceForConnection / gridSizeRef.current.width) + 1,
       },
       (_, i) => i,
     );
@@ -164,7 +165,7 @@ const Particles: FC<ParticlesProps> = ({
     const hdirs = Array.from(
       {
         length:
-          Math.floor(minDistanceForConnection / gridSizeRef.current.height) + 1,
+          Math.ceil(minDistanceForConnection / gridSizeRef.current.height) + 1,
       },
       (_, i) => i,
     );
