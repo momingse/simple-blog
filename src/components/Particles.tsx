@@ -6,6 +6,9 @@ type ParticlesProps = {
   minDistanceForConnection?: number;
   particlesColor?: string;
   connectionColor?: string;
+  numOfGrids?: number;
+  withNodesConnection?: boolean;
+  withMouseConnection?: boolean;
 };
 
 type Particle = {
@@ -22,11 +25,19 @@ const Particles: FC<ParticlesProps> = ({
   minDistanceForConnection = 200,
   particlesColor = "#9BA4B5",
   connectionColor = "#9BA4B5",
+  numOfGrids = 10,
+  withNodesConnection = true,
+  withMouseConnection = true,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const animationFrameRef = useRef<number>(0);
   const mousePosRef = useRef<{ x: number; y: number } | null>(null);
+  const gridSizeRef = useRef<{ width: number; height: number }>({
+    width: 0,
+    height: 0,
+  });
+  const gridRef = useRef<Map<string, Particle[]>>(new Map());
 
   const initParticles = () => {
     const canvas = canvasRef.current;
@@ -36,6 +47,7 @@ const Particles: FC<ParticlesProps> = ({
       Math.random() * (maxNumOfParticles / 2) + maxNumOfParticles / 2,
     );
 
+    // init particles
     particlesRef.current = Array.from({ length: numParticles }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
@@ -43,6 +55,26 @@ const Particles: FC<ParticlesProps> = ({
       vx: (Math.random() * 2 - 1) * 0.3,
       vy: (Math.random() * 2 - 1) * 0.3,
     }));
+
+    gridSizeRef.current = {
+      width: canvas.width / numOfGrids,
+      height: canvas.height / numOfGrids,
+    };
+
+    if (!withNodesConnection) return;
+    // init grid with array in left to right, top to bottom order
+    for (let i = 0; i < numOfGrids; i++) {
+      for (let j = 0; j < numOfGrids; j++) {
+        gridRef.current.set(`${i},${j}`, []);
+      }
+    }
+    particlesRef.current.forEach((p) => {
+      const key = `${Math.floor(p.x / gridSizeRef.current.width)},${Math.floor(
+        p.y / gridSizeRef.current.height,
+      )}`;
+
+      gridRef.current.get(key)?.push(p);
+    });
   };
 
   const render = () => {
@@ -62,6 +94,10 @@ const Particles: FC<ParticlesProps> = ({
       ctx.fill();
     }
 
+    if (!withNodesConnection) {
+      animationFrameRef.current = window.requestAnimationFrame(render);
+      return;
+    }
     // Move particles
     for (const p of particlesRef.current) {
       p.x += p.vx;
@@ -72,41 +108,126 @@ const Particles: FC<ParticlesProps> = ({
       if (p.y < 0) p.y += canvas.height;
     }
 
-    // Connect nearby particles
-    for (let i = 0; i < particlesRef.current.length; i++) {
-      for (let j = i + 1; j < particlesRef.current.length; j++) {
-        const a = particlesRef.current[i];
-        const b = particlesRef.current[j];
-        const dx = a.x - b.x;
-        const dy = a.y - b.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < minDistanceForConnection) {
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = connectionColor;
-          ctx.lineWidth = 0.5;
-          ctx.globalAlpha = 1 - dist / minDistanceForConnection;
-          ctx.stroke();
+    // update grid
+    for (const [key] of gridRef.current) {
+      gridRef.current.set(key, []);
+    }
+
+    particlesRef.current.forEach((p, index) => {
+      const key = `${Math.floor(p.x / gridSizeRef.current.width)},${Math.floor(
+        p.y / gridSizeRef.current.height,
+      )}`;
+
+      gridRef.current.set(key, gridRef.current.get(key) || []);
+      gridRef.current.get(key)?.push(p);
+    });
+
+    const connection: {
+      dist: number;
+      x1: number;
+      y1: number;
+      x2: number;
+      y2: number;
+    }[] = [];
+
+    // calculate connections
+    // start with same grid
+    for (const [key, p] of gridRef.current) {
+      if (p.length <= 1) continue;
+      for (let i = 0; i < p.length; i++) {
+        for (let j = i + 1; j < p.length; j++) {
+          const dx = p[i].x - p[j].x;
+          const dy = p[i].y - p[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < minDistanceForConnection) {
+            connection.push({
+              dist,
+              x1: p[i].x,
+              y1: p[i].y,
+              x2: p[j].x,
+              y2: p[j].y,
+            });
+          }
         }
       }
     }
 
-    // Connect particles to mouse
-    if (mousePosRef.current) {
-      for (const p of particlesRef.current) {
-        const dx = p.x - mousePosRef.current.x;
-        const dy = p.y - mousePosRef.current.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < minDistanceForConnection) {
-          ctx.beginPath();
-          ctx.moveTo(mousePosRef.current.x, mousePosRef.current.y);
-          ctx.lineTo(p.x, p.y);
-          ctx.strokeStyle = connectionColor;
-          ctx.lineWidth = 0.5;
-          ctx.globalAlpha = 1 - dist / minDistanceForConnection;
-          ctx.stroke();
+    // then neighbor grids
+    const wdirs = Array.from(
+      {
+        length:
+          Math.floor(minDistanceForConnection / gridSizeRef.current.width) + 1,
+      },
+      (_, i) => i,
+    );
+
+    const hdirs = Array.from(
+      {
+        length:
+          Math.floor(minDistanceForConnection / gridSizeRef.current.height) + 1,
+      },
+      (_, i) => i,
+    );
+
+    for (const [key, p] of gridRef.current) {
+      const [x, y] = key.split(",").map(Number);
+      for (const dx of wdirs) {
+        for (const dy of hdirs) {
+          if (dx === 0 && dy === 0) continue;
+          const nx = x + dx;
+          const ny = y + dy;
+          const neighborKey = `${nx},${ny}`;
+          const neighbor = gridRef.current.get(neighborKey);
+
+          if (!neighbor) continue;
+          for (const p1 of p) {
+            for (const p2 of neighbor) {
+              const dx = p1.x - p2.x;
+              const dy = p1.y - p2.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < minDistanceForConnection) {
+                connection.push({
+                  dist,
+                  x1: p1.x,
+                  y1: p1.y,
+                  x2: p2.x,
+                  y2: p2.y,
+                });
+              }
+            }
+          }
         }
+      }
+    }
+
+    // draw connections
+    for (const { dist, x1, y1, x2, y2 } of connection) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = connectionColor;
+      ctx.lineWidth = 0.5;
+      ctx.globalAlpha = 1 - dist / minDistanceForConnection;
+      ctx.stroke();
+    }
+
+    if (!withMouseConnection || !mousePosRef.current) {
+      animationFrameRef.current = window.requestAnimationFrame(render);
+      return;
+    }
+    // Connect particles to mouse
+    for (const p of particlesRef.current) {
+      const dx = p.x - mousePosRef.current.x;
+      const dy = p.y - mousePosRef.current.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < minDistanceForConnection) {
+        ctx.beginPath();
+        ctx.moveTo(mousePosRef.current.x, mousePosRef.current.y);
+        ctx.lineTo(p.x, p.y);
+        ctx.strokeStyle = connectionColor;
+        ctx.lineWidth = 0.5;
+        ctx.globalAlpha = 1 - dist / minDistanceForConnection;
+        ctx.stroke();
       }
     }
 
@@ -130,6 +251,11 @@ const Particles: FC<ParticlesProps> = ({
       if (ctx) {
         ctx.scale(dpr, dpr);
       }
+
+      gridSizeRef.current = {
+        width: canvas.width / numOfGrids,
+        height: canvas.height / numOfGrids,
+      };
     };
 
     const handleMouseMove = (e: MouseEvent) => {
