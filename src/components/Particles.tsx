@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from "react";
+import React, { FC, useCallback, useEffect, useRef } from "react";
 
 type ParticlesProps = {
   className?: string;
@@ -39,7 +39,7 @@ const Particles: FC<ParticlesProps> = ({
   });
   const gridRef = useRef<Map<string, Particle[]>>(new Map());
 
-  const initParticles = () => {
+  const initParticles = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -75,9 +75,9 @@ const Particles: FC<ParticlesProps> = ({
 
       gridRef.current.get(key)?.push(p);
     });
-  };
+  }, [maxNumOfParticles, numOfGrids, withNodesConnection]);
 
-  const render = () => {
+  const render = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -234,34 +234,40 @@ const Particles: FC<ParticlesProps> = ({
     ctx.globalAlpha = 1; // Reset alpha
 
     animationFrameRef.current = window.requestAnimationFrame(render);
-  };
+  }, [
+    particlesColor,
+    connectionColor,
+    minDistanceForConnection,
+    withNodesConnection,
+    withMouseConnection,
+  ]);
 
-  useEffect(() => {
+  const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const resizeCanvas = () => {
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width = `${window.innerWidth}px`;
+    canvas.style.height = `${window.innerHeight}px`;
 
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.scale(dpr, dpr);
-      }
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.scale(dpr, dpr);
+    }
 
-      gridSizeRef.current = {
-        width: canvas.width / numOfGrids,
-        height: canvas.height / numOfGrids,
-      };
+    gridSizeRef.current = {
+      width: canvas.width / numOfGrids,
+      height: canvas.height / numOfGrids,
     };
+  }, []);
 
-    const handleMouseMove = (e: MouseEvent) => {
-      mousePosRef.current = { x: e.clientX, y: e.clientY };
-    };
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    mousePosRef.current = { x: e.clientX, y: e.clientY };
+  }, []);
 
+  useEffect(() => {
     window.addEventListener("resize", resizeCanvas);
     window.addEventListener("mousemove", handleMouseMove);
 
@@ -274,7 +280,7 @@ const Particles: FC<ParticlesProps> = ({
       window.removeEventListener("resize", resizeCanvas);
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [maxNumOfParticles, minDistanceForConnection]);
+  }, [resizeCanvas, handleMouseMove, initParticles, render]);
 
   return (
     <canvas
