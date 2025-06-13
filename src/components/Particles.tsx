@@ -2,6 +2,7 @@ import React, { FC, useCallback, useEffect, useRef } from "react";
 
 type ParticlesProps = {
   className?: string;
+  areaParticlesRatio: number;
   maxNumOfParticles?: number;
   minDistanceForConnection?: number;
   particlesColor?: string;
@@ -21,7 +22,8 @@ type Particle = {
 
 const Particles: FC<ParticlesProps> = ({
   className,
-  maxNumOfParticles = 200,
+  areaParticlesRatio = 9000,
+  maxNumOfParticles = 1000,
   minDistanceForConnection = 200,
   particlesColor = "#9BA4B5",
   connectionColor = "#9BA4B5",
@@ -43,8 +45,12 @@ const Particles: FC<ParticlesProps> = ({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const availableParticels = Math.min(
+      maxNumOfParticles,
+      Math.floor((canvas.width * canvas.height) / areaParticlesRatio),
+    );
     const numParticles = Math.floor(
-      Math.random() * (maxNumOfParticles / 2) + maxNumOfParticles / 2,
+      Math.random() * (availableParticels / 2) + availableParticels / 2,
     );
 
     // init particles
@@ -78,7 +84,6 @@ const Particles: FC<ParticlesProps> = ({
   }, [maxNumOfParticles, numOfGrids, withNodesConnection]);
 
   const render = useCallback(() => {
-    const startTime = Date.now();
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -111,10 +116,10 @@ const Particles: FC<ParticlesProps> = ({
 
     // update grid
     for (const [key] of gridRef.current) {
-      gridRef.current.set(key, []);
+      gridRef.current.get(key)!.length = 0;
     }
 
-    particlesRef.current.forEach((p, index) => {
+    particlesRef.current.forEach((p) => {
       const key = `${Math.floor(p.x / gridSizeRef.current.width)},${Math.floor(
         p.y / gridSizeRef.current.height,
       )}`;
@@ -133,7 +138,7 @@ const Particles: FC<ParticlesProps> = ({
 
     // calculate connections
     // start with same grid
-    for (const [key, p] of gridRef.current) {
+    for (const [_, p] of gridRef.current) {
       if (p.length <= 1) continue;
       for (let i = 0; i < p.length; i++) {
         for (let j = i + 1; j < p.length; j++) {
