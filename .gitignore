@@ -3,3 +3,6 @@
 .env
 .DS_Store
 /playground
+
+# conda
+.conda
