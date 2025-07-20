@@ -2,6 +2,7 @@ import Prism from "prismjs";
 import "prismjs/components/prism-python";
 import "prismjs/components/prism-scss";
 import "prismjs/components/prism-sql";
+import "prismjs/components/prism-bash"
 import { FC, useEffect, useRef, useState } from "react";
 import Anchor, { Item } from "./Anchor";
 
