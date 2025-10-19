@@ -1,0 +1,46 @@
+<svg width="680" height="260" viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg { fill: #fbfbfb; }
+    .chunk { fill: #ffffff; stroke: #dcdcdc; }
+    .viewport { fill: none; stroke: #007acc; stroke-width: 3; stroke-dasharray: 6 4; }
+    .label { font: 12px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; fill:#222; }
+    .small { font-size:11px; fill:#666; }
+  </style>
+
+  <rect width="100%" height="100%" class="bg"/>
+
+  <!-- world chunks (3x4) -->
+  <g transform="translate(40,30)">
+    <!-- draw grid of chunks -->
+    <g>
+      <!-- row 0 -->
+      <rect x="0" y="0" width="140" height="100" class="chunk"/>
+      <rect x="140" y="0" width="140" height="100" class="chunk"/>
+      <rect x="280" y="0" width="140" height="100" class="chunk"/>
+      <rect x="420" y="0" width="140" height="100" class="chunk"/>
+      <!-- row 1 -->
+      <rect x="0" y="100" width="140" height="100" class="chunk"/>
+      <rect x="140" y="100" width="140" height="100" class="chunk"/>
+      <rect x="280" y="100" width="140" height="100" class="chunk"/>
+      <rect x="420" y="100" width="140" height="100" class="chunk"/>
+    </g>
+
+    <!-- chunk coords -->
+    <g class="small" fill="#888">
+      <text x="8" y="16">(-1,0)</text>
+      <text x="148" y="16">(0,0)</text>
+      <text x="288" y="16">(1,0)</text>
+      <text x="428" y="16">(2,0)</text>
+
+      <text x="8" y="116">(-1,1)</text>
+      <text x="148" y="116">(0,1)</text>
+      <text x="288" y="116">(1,1)</text>
+      <text x="428" y="116">(2,1)</text>
+    </g>
+
+    <!-- viewport -->
+    <rect x="170" y="40" width="200" height="120" class="viewport"/>
+    <text x="180" y="36" class="label">Viewport (screen)</text>
+
+  </g>
+</svg>
