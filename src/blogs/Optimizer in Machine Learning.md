@@ -160,7 +160,6 @@ where $m_t$ is the momentum at time $t$ and $v_t$ is the sum of the squares of t
 def Adam(x, y, learning_rate=0.1, max_epochs=2000, tolerance=1e-4):
     # Random initial point
     history = [(x, y, quadratic(x, y))]
-    grad_squared = np.array([0.0, 0.0])
     epsilon = 1e-7  # Small constant to avoid division by zero
 
     first_moment = np.array([0.0, 0.0])
