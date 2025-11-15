@@ -61,10 +61,10 @@ Home.getInitialProps = () => {
   return {
     homeInfo: {
       name: "Harry Chow",
-      descipion: "A year 4 student from HKUST majored in Computer Sciencs.",
-      languages: ["Javascript\\TypeScript", "Python", "C\\C++", "Java"],
+      descipion: "FullStack Developer graduate from HKUST CS",
+      languages: ["Javascript\\TypeScript", "Go", "Python", "C\\C++", "Java"],
       techStack: ["Reactjs", "Nextjs", "Expressjs"],
-      interestedArea: ["FullStack", "AI", "Computer Vision"],
+      interestedArea: ["FullStack", "AI"],
     },
   } as HomeProps;
 };
