@@ -58,7 +58,7 @@ export const blogsInfo = Object.entries(blogsInMD).map(([key, value]) => {
           // src should be "../../public/blog/xxx.png"
           // remove all before "/blog/"
           href = href.replace(/^.*\/blog\//, "");
-          return `<img src="${href}" alt="${text}" />`;
+          return `<img src="${href}" alt="${text}" lazy="true />`;
         },
       },
     })
