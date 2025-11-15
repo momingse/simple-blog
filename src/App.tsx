@@ -59,7 +59,7 @@ export const blogsInfo = Object.entries(blogsInMD).map(([key, value]) => {
           // remove all before "/blog/"
           href = href.replace(/^.*\/blog\//, "");
           return `<img src="${href}" alt="${text}" />`;
-        }
+        },
       },
     })
     .parse(mdValue, { async: false }) as string;
@@ -72,13 +72,14 @@ export const blogsInfo = Object.entries(blogsInMD).map(([key, value]) => {
   };
 });
 
-const blogsRoutes: RouteInfo[] = blogsInfo.map(({ name, html }) => {
-  return {
-    name,
-    path: `/blog/${name}`,
-    component: <BlogTemplate html={html} />,
-  };
-});
+const blogsRoutes: RouteInfo[] = blogsInfo
+  .map(({ name, html }) => {
+    return {
+      name,
+      path: `/blog/${name}`,
+      component: <BlogTemplate html={html} />,
+    };
+  });
 
 const routesOrder: Readonly<{ [key: string]: number }> = Object.freeze({
   Blog: 1,
