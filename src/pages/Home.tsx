@@ -4,11 +4,11 @@ import FadeInWrapper from "../components/FadeInWrapper";
 
 const Home = () => {
   return (
-    <div className="space-y-16">
+    <div className="space-y-4">
       {/* Hero Section */}
-      <section className="space-y-6">
+      <section className="space-y-2">
         <FadeInWrapper>
-          <h1 className="text-5xl sm:text-7xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-gray-900">
             Full-Stack Developer <br />
             <span className="text-gray-400">
               focused on building with purpose.
@@ -42,19 +42,18 @@ const Home = () => {
       {/* Bio Cards */}
       <section>
         <FadeInWrapper className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-8 bg-white border border-gray-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+          <div className="p-8 bg-white border border-gray-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow md:h-64">
             <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
               <GraduationCap size={24} />
             </div>
             <h3 className="text-xl font-bold mb-2 text-gray-900">Education</h3>
             <p className="text-gray-600 leading-relaxed">
               Computer Science graduate from The Hong Kong University of Science
-              and Technology (HKUST), with a focus on Full-Stack Engineering and
-              AI-related systems.
+              and Technology (HKUST)
             </p>
           </div>
 
-          <div className="p-8 bg-white border border-gray-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+          <div className="p-8 bg-white border border-gray-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow md:h-64">
             <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-6">
               <Code2 size={24} />
             </div>
@@ -78,7 +77,7 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="p-8 bg-white border border-gray-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+          <div className="p-8 bg-white border border-gray-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow md:h-64">
             <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-6">
               <Cpu size={24} />
             </div>

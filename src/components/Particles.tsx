@@ -288,10 +288,11 @@ const Particles: FC<ParticlesProps> = ({
     };
   }, [resizeCanvas, handleMouseMove, initParticles, render]);
 
+
   return (
     <canvas
       ref={canvasRef}
-      className={`fixed top-0 left-0 h-screen w-screen z-[-1] bg-transparent ${className || ""}`}
+      className={`fixed top-0 left-0 h-screen w-screen bg-transparent ${className || ""}`}
     />
   );
 };
