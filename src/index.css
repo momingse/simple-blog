@@ -25,11 +25,14 @@
   #blog a {
     @apply font-bold text-blue-500 cursor-pointer hover:text-blue-600;
   }
-  #blog ol {
+  #blog ol, #blog ul {
     @apply pl-4;
   }
   #blog ol li {
     @apply list-outside list-decimal;
+  }
+  #blog ul li {
+    @apply list-outside list-disc;
   }
   #blog > *:not(#blog) {
     @apply py-2;
@@ -39,5 +42,5 @@
   }
   *:focus {
     outline: none;
-}
+  }
 }
