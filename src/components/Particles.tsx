@@ -2,7 +2,7 @@ import React, { FC, useCallback, useEffect, useRef } from "react";
 
 type ParticlesProps = {
   className?: string;
-  areaParticlesRatio: number;
+  areaParticlesRatio?: number;
   maxNumOfParticles?: number;
   minDistanceForConnection?: number;
   particlesColor?: string;
