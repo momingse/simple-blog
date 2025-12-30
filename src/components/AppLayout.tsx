@@ -9,10 +9,12 @@ type AppLayoutProps = {
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
   return (
-    <div className="relative">
+    <div className="relative bg-slate-50">
       <Particles />
       <AppHeader />
-      <div className="py-3 px-6 md:py-9">{children}</div>
+      <main className="pt-28 px-6">
+        <div className="max-w-4xl mx-auto">{children}</div>
+      </main>
       <ReturnToTopButton className="fixed bottom-6 right-6" />
     </div>
   );

@@ -1,9 +1,9 @@
-# Resizable Component in React/Angular
+# Resizable Component in React
 
 ---
 
 date: 08/07/2024
-topics: typescript react angular
+topics: typescript react
 
 ---
 
@@ -19,22 +19,20 @@ Consider we separate the whole window in to two part separately which the left s
 
 ```html
 <div class="manual-test-case-wrapper">
- <div class="navigation">
- {...}
- </div>
- <div class="display">
- {...}
- </div>
+  <div class="navigation">{...}</div>
+  <div class="display">{...}</div>
 </div>
 ```
 
-```sass
-.manual-test-case-wrapper 
-	display: flex
-  height: 100%
+```css
+.manual-test-case-wrapper {
+  display: flex;
+  height: 100%;
+}
 
-.display 
-	flex: 1
+.display {
+  flex: 1;
+}
 ```
 
 ### Navigation Part
@@ -43,109 +41,38 @@ We need a draggable bar for resizing, which it show place at the boarder of the 
 
 ```html
 <div class="manual-test-case-wrapper">
- <div class="navigation">
-	 <div class="right-resizer" />
- </div>
- <div class="display">
- {...}
- </div>
+  <div class="navigation">
+    <div class="right-resizer" />
+  </div>
+  <div class="display">{...}</div>
 </div>
 ```
 
-```sass
-.manual-test-case-wrapper 
-		display: flex
-	  height: 100%
+```css
+.manual-test-case-wrapper {
+  display: flex;
+  height: 100%;
+}
 
-.display 
-		flex: 1
+.display {
+  flex: 1;
+}
 
-.right-resizer
-    cursor: ew-resize
-    width: 2px
-    height: 100%
-    position: absolute
-    right: 0
-    top: 0
-    background-color: lightgray
-    z-index: 1000
+.right-resizer {
+  cursor: ew-resize;
+  width: 2px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: lightgray;
+  z-index: 1000;
+}
 ```
 
 ## Code Implementation
 
 The only thing we need to handle is enable a resize function when mousdown on the resizer and disable when mouseup.
-
-### Angular
-
-We can implement this by `HostListener` and `ViewChild` to resize the children component.
-
-```html
-<div id="resizable" #resizable>
-  <div (mousedown)="onMouseDown($event, 'right')" id="right-resizer"></div>
-  <ng-content></ng-content>
-</div>
-
-```
-
-```js
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  Input,
-  ViewChild,
-} from '@angular/core';
-
-@Component({
-  selector: 'app-resizable',
-  standalone: true,
-  imports: [],
-  templateUrl: './resizable.component.html',
-  styleUrl: './resizable.component.sass',
-})
-export class ResizableComponent {
-  @Input() left: boolean = false;
-  @Input() right: boolean = false;
-  @Input() top: boolean = false;
-  @Input() bottom: boolean = false;
-  @ViewChild('resizable') resizable?: ElementRef;
-
-  isResizing = false;
-
-  constructor() {}
-
-  onMouseDown(
-    event: MouseEvent,
-  ): void {
-    event.preventDefault();
-    this.isResizing = true;
-  }
-
-  @HostListener('document:mousemove', ['$event'])
-  onMouseMove(event: MouseEvent): void {
-    if (!this.isResizing) return;
-    this.rightResizer(event);
-  }
-
-  @HostListener('document:mouseup', ['$event'])
-  onMouseUp(event: MouseEvent): void {
-    if (!this.isResizing) return;
-    this.isResizing = false;
-  }
-
-  rightResizer(event: MouseEvent): void {
-    if (!this.resizable) return;
-    const resizable = this.resizable.nativeElement as HTMLElement;
-
-    resizable.style.width = `${resizable.offsetWidth + event.movementX}px`;
-
-    event.preventDefault();
-  }
-}
-
-```
-
-### React
 
 We can use `useRef` to get the size of `Resizable` and use `onMouseDown` to add the listener for resizing.
 

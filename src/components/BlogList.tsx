@@ -1,6 +1,7 @@
 import BlogCard from "./BlogCard";
 import FadeInWrapper from "../components/FadeInWrapper";
 import { FC } from "react";
+import { Search } from "lucide-react";
 
 type BlogInfo = {
   blogsInfo: any[];
@@ -15,6 +16,20 @@ const BlogList: FC<BlogInfo> = ({ blogsInfo }) => {
     if (monthA !== monthB) return monthB - monthA;
     return dayB - dayA;
   });
+
+  if (sortedBlogsInfo.length === 0) {
+    return (
+      <div className="text-center py-20">
+        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Search size={24} className="text-gray-300" />
+        </div>
+        <p className="text-gray-400 text-sm font-medium italic">
+          No results found in the archives.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <FadeInWrapper
       key={"blog"}

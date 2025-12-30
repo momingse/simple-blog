@@ -1,4 +1,4 @@
-# Animated Background with Particles Effect in React
+# Optimizing React Canvas Particles with Divide & Conquer
 
 ---
 
@@ -226,7 +226,7 @@ for (const [key, p] of gridRef.current) {
 
 Based on the results from steps 1 and 2, we can merge the connections into a single list. Then, we can draw all the connections without duplicates.
 
-Previously, drawing connections was an $O(n^2)$ operation. Now, we use $O(x * y)$ to clear and update the grids, and for the average case, we use $O(n * (n / (x * y)) * 4)$ because we divide all particles into grids (so each has roughly $n / (x * y)$ points) and we check four grids (one is self and three are neighbors). Therefore, the final complexity is approximately $O(n^2 / (x * y))$. As you can see, when $x$ and $y$ are large, the processing becomes much faster, essentially converting space complexity to time complexity. The worst case is when all particles end up in a single grid, bringing us back to $O(n^2)$.
+Previously, drawing connections was an $O(n^2)$ operation. Now, we use $O(x * y)$ to clear and update the grids, and for the average case, we use $O(n * (n / (x * y)) * 9)$ because we divide all particles into grids (so each has roughly $n / (x * y)$ points) and we check four grids (one is self and three are neighbors). Therefore, the final complexity is approximately $O(n^2 / (x * y))$. As you can see, when $x$ and $y$ are large, the processing becomes much faster, essentially converting space complexity to time complexity. The worst case is when all particles end up in a single grid, bringing us back to $O(n^2)$.
 
 ---
 

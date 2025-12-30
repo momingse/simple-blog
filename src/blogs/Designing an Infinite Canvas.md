@@ -3,7 +3,7 @@
 ---
 
 date: 19/10/2025
-topics: javascript canvas 
+topics: javascript canvas
 
 ---
 

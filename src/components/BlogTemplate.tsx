@@ -45,7 +45,7 @@ const BlogTemplate: FC<BlogTemplateProps> = ({ html }) => {
         <div className="hidden lg:block ml-2 w-44 border-zinc-50">
           <Anchor
             items={items}
-            className="sticky top-10 text-zinc-600 text-xs overflow-hidden whitespace-nowrap text-ellipsis"
+            className="sticky top-24 text-zinc-600 text-xs overflow-hidden whitespace-nowrap text-ellipsis"
           />
         </div>
       </div>

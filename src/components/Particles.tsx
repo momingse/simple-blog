@@ -2,7 +2,7 @@ import React, { FC, useCallback, useEffect, useRef } from "react";
 
 type ParticlesProps = {
   className?: string;
-  areaParticlesRatio: number;
+  areaParticlesRatio?: number;
   maxNumOfParticles?: number;
   minDistanceForConnection?: number;
   particlesColor?: string;
@@ -288,10 +288,11 @@ const Particles: FC<ParticlesProps> = ({
     };
   }, [resizeCanvas, handleMouseMove, initParticles, render]);
 
+
   return (
     <canvas
       ref={canvasRef}
-      className={`fixed top-0 left-0 h-screen w-screen z-[-1] bg-transparent ${className || ""}`}
+      className={`fixed top-0 left-0 h-screen w-screen bg-transparent ${className || ""}`}
     />
   );
 };
