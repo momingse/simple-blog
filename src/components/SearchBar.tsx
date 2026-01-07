@@ -1,4 +1,3 @@
-import { Fzearch } from "fzearch";
 import {
   ChangeEvent,
   HTMLProps,
@@ -15,6 +14,8 @@ type SearchBarProps<T extends any[]> = {
   placeholder?: string;
   render: (data: T) => ReactNode;
   initialData: T;
+  searchKey: string;
+  defaultSorting?: (data: T) => T;
 };
 
 const SearchBar = <T extends any[]>({
@@ -22,32 +23,66 @@ const SearchBar = <T extends any[]>({
   placeholder = "Search",
   initialData,
   render,
+  searchKey,
+  defaultSorting,
 }: SearchBarProps<T>) => {
   const [search, setSearch] = useState("");
   const [filteredBlogs, setFilteredBlogs] = useState(initialData);
 
-  const fzearch = useMemo(
-    () =>
-      new Fzearch(initialData, {
-        keys: ["name"],
-        dropoutRate: 0.75,
-        caseSensitive: false,
-      }),
-    [initialData],
+  const fuzzySearch = useCallback(
+    (query: string, data: T, searchKey?: string) => {
+      const lowercaseQuery = query.toLowerCase();
+      const queryLen = lowercaseQuery.length;
+      const result: [number, number][] = [];
+      for (let idx = 0; idx < data.length; idx++) {
+        const target = (
+          data[idx][searchKey as keyof T] as string
+        ).toLowerCase();
+        const targetLen = target.length;
+
+        let score = 0;
+        let j = 0;
+        let gapSize = 1;
+
+        if (targetLen < queryLen) continue;
+
+        for (let i = 0; i < targetLen && j < queryLen; i++) {
+          if (j < queryLen && target[i] === lowercaseQuery[j]) {
+            score += 1 / gapSize;
+            j++;
+            gapSize = 1;
+          } else {
+            gapSize++;
+          }
+        }
+
+        const noramizedScore = score;
+
+        if (noramizedScore < 0.5 * queryLen) continue;
+
+        result.push([idx, noramizedScore]);
+      }
+
+      return result.sort((a, b) => b[1] - a[1]).map((item) => data[item[0]]);
+    },
+    [],
   );
 
   const debounceSearch = useCallback(
-    debounce((value) => {
-      if (value === "") return setFilteredBlogs(initialData);
-      setFilteredBlogs(fzearch.search(value) as T);
+    debounce((value, initialData, searchKey) => {
+      if (value === "") {
+        if (!defaultSorting) return setFilteredBlogs(initialData);
+        return setFilteredBlogs(defaultSorting(initialData));
+      }
+      setFilteredBlogs(fuzzySearch(value, initialData, searchKey) as T);
     }, 350),
-    [initialData],
+    [fuzzySearch],
   );
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearch(value);
-    debounceSearch(value);
+    debounceSearch(value, initialData, searchKey);
   };
 
   const children = useMemo(() => {

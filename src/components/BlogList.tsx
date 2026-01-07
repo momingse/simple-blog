@@ -8,16 +8,7 @@ type BlogInfo = {
 };
 
 const BlogList: FC<BlogInfo> = ({ blogsInfo }) => {
-  const sortedBlogsInfo = [...blogsInfo].sort((a, b) => {
-    const [dayA, monthA, yearA] = a.date.split("/").map(Number);
-    const [dayB, monthB, yearB] = b.date.split("/").map(Number);
-
-    if (yearA !== yearB) return yearB - yearA;
-    if (monthA !== monthB) return monthB - monthA;
-    return dayB - dayA;
-  });
-
-  if (sortedBlogsInfo.length === 0) {
+  if (blogsInfo.length === 0) {
     return (
       <div className="text-center py-20">
         <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -39,7 +30,7 @@ const BlogList: FC<BlogInfo> = ({ blogsInfo }) => {
       delay={0.05}
       duration={0.5}
     >
-      {sortedBlogsInfo.map(({ date, topics, name }) => {
+      {blogsInfo.map(({ date, topics, name }) => {
         return (
           <BlogCard
             date={date}

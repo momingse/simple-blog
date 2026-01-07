@@ -21,6 +21,17 @@ export default function Blog() {
       <SearchBar
         initialData={blogsInfo}
         render={(data) => <BlogList blogsInfo={data} />}
+        defaultSorting={(data) =>
+          [...data].sort((a, b) => {
+            const [dayA, monthA, yearA] = a.date.split("/").map(Number);
+            const [dayB, monthB, yearB] = b.date.split("/").map(Number);
+
+            if (yearA !== yearB) return yearB - yearA;
+            if (monthA !== monthB) return monthB - monthA;
+            return dayB - dayA;
+          })
+        }
+        searchKey="name"
       />
     </div>
   );
