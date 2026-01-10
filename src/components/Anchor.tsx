@@ -1,4 +1,4 @@
-import { FC, HTMLProps, useCallback } from "react";
+import { FC, HTMLProps } from "react";
 import useEventListener from "../util/hook/useEventListener";
 import { classNameCombiner } from "../util/helper";
 
@@ -17,14 +17,22 @@ type AnchorProps = {
 
 const Anchor: FC<AnchorProps> = ({ className, items }) => {
   const scrollToId = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    // document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    const element = document.getElementById(id);
+    if (!element) return;
+    window.scrollTo({
+      behavior: "smooth",
+      top:
+        element.getBoundingClientRect().top -
+        document.body.getBoundingClientRect().top -
+        69, // Height of AppHeader
+    });
   };
 
   const getElementTopList = () => {
     return items.map((item) => {
       const element = document.getElementById(item.id);
-      if (!element)
-        throw new Error(`Anchor cannot find element with id ${item.id}`);
+      if (!element) return;
       return element.offsetTop - ADJUST_PX;
     });
   };
@@ -43,35 +51,37 @@ const Anchor: FC<AnchorProps> = ({ className, items }) => {
   );
 
   return (
-    <div className={classNameCombiner(className, "flex")}>
-      <div
-        className="h-4 border border-sky-500 absolute"
-        style={{
-          borderWidth: scrollProgress === 0 ? 0 : "1px",
-          top: `${Math.max(1.25 * (scrollProgress! - 1), 0)}rem`,
-          transition: "top 0.2s",
-        }}
-      ></div>
-      <div className="pl-2 overflow-hidden flex flex-col gap-1">
-        {items.map((item, index) => {
-          return (
-            <div
-              key={item.id}
-              className={classNameCombiner(
-                "cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis",
-                scrollProgress && scrollProgress - 1 === index
-                  ? "text-sky-500"
-                  : null,
-                item.level === 2 ? "pl-0" : "pl-3",
-              )}
-              onClick={() => scrollToId(item.id)}
-            >
-              {item.title}
-            </div>
-          );
-        })}
+    <>
+      <div className={classNameCombiner(className, "flex")}>
+        <div
+          className="h-6 border border-indigo-600 absolute"
+          style={{
+            borderWidth: scrollProgress === 0 ? 0 : "1px",
+            top: `${Math.max(2 * (scrollProgress! - 1), 0)}rem`,
+            transition: "top 0.2s",
+          }}
+        ></div>
+        <div className="pl-2 overflow-hidden flex flex-col gap-1">
+          {items.map((item, index) => {
+            return (
+              <div
+                key={item.id}
+                className={classNameCombiner(
+                  "cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis py-1.5",
+                  scrollProgress && scrollProgress - 1 === index
+                    ? "text-indigo-600 font-bold"
+                    : "text-slate-400 hover:text-slate-900",
+                  item.level === 2 ? "pl-0" : "pl-3",
+                )}
+                onClick={() => scrollToId(item.id)}
+              >
+                {item.title}
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
