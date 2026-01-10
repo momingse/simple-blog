@@ -2,45 +2,163 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  /* font-family: "Ubuntu", sans-serif; */
-}
-
 @layer base {
+  :root {
+    --font-sans: "Inter", sans-serif;
+    --font-serif: "Lora", serif;
+    --font-mono: "JetBrains Mono", monospace;
+  }
+
+  body {
+    @apply bg-gray-50 text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 font-sans;
+    scroll-behavior: smooth;
+  }
+
   h1 {
-    @apply text-3xl font-bold py-2 my-3 border-b-zinc-100 border-b;
+    @apply text-3xl font-bold py-2 my-3 border-b-zinc-100 border-b font-sans;
   }
   h2 {
-    @apply text-2xl font-bold py-1 my-2 border-b-zinc-100 border-b;
+    @apply text-2xl font-bold py-1 my-2 border-b-zinc-100 border-b font-sans;
   }
   h3 {
-    @apply text-xl font-bold py-1 my-2 border-b-zinc-100 border-b;
+    @apply text-xl font-bold py-1 my-2 border-b-zinc-100 border-b font-sans;
   }
+
   code {
-    @apply py-2 text-[0.9em] rounded-lg text-[#5e5e5e] bg-opacity-5 bg-zinc-400;
+    @apply text-[0.9em] rounded-lg px-1.5 py-0.5;
+    font-family: var(--font-mono) !important;
   }
-  pre {
-    @apply py-6 rounded-3xl;
+
+  #blog pre {
+    @apply my-6 rounded-xl bg-[#0f172a] !important;
+    padding: 0 !important;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
   }
+
+  #blog pre::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+
+  #blog pre::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #blog pre::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+  }
+
+  #blog pre:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.45);
+  }
+
+  #blog pre[class*="language-"] {
+    @apply m-0 p-6 text-[0.9rem] leading-relaxed !important;
+  }
+
+  /* Fixed Nesting by using flat selectors */
   #blog a {
-    @apply font-bold text-blue-500 cursor-pointer hover:text-blue-600;
+    @apply font-bold text-indigo-600 cursor-pointer hover:text-indigo-700 transition-colors;
   }
-  #blog ol, #blog ul {
-    @apply pl-4;
+  #blog ol,
+  #blog ul {
+    @apply pl-6 my-4;
   }
   #blog ol li {
-    @apply list-outside list-decimal;
+    @apply list-outside list-decimal mb-2;
   }
   #blog ul li {
-    @apply list-outside list-disc;
+    @apply list-outside list-disc mb-2;
   }
-  #blog > *:not(#blog) {
-    @apply py-2;
+
+  /* Fixed "dev" typo to "div" */
+  #blog div.code-block-wrapper pre {
+    border-radius: 0 !important;
   }
+  #blog code {
+    padding-left: 0;
+  }
+
   nav a {
-    @apply hover:text-zinc-700;
+    @apply hover:text-indigo-600 transition-colors;
   }
+
   *:focus {
     outline: none;
   }
+}
+
+@layer components {
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full border-2 border-transparent bg-clip-content;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+
+  /* PrismJS Tokens */
+  .token.comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata {
+    @apply text-slate-500;
+  }
+  .token.punctuation {
+    @apply text-slate-400;
+  }
+  .token.property,
+  .token.tag,
+  .token.boolean,
+  .token.number,
+  .token.constant,
+  .token.symbol,
+  .token.deleted {
+    @apply text-rose-400;
+  }
+  .token.selector,
+  .token.attr-name,
+  .token.string,
+  .token.char,
+  .token.builtin,
+  .token.inserted {
+    @apply text-emerald-400;
+  }
+  .token.operator,
+  .token.entity,
+  .token.url {
+    @apply text-purple-400;
+  }
+  .token.atrule,
+  .token.attr-value,
+  .token.keyword {
+    @apply text-blue-400;
+  }
+  .token.function,
+  .token.class-name {
+    @apply text-yellow-400;
+  }
+  .token.regex,
+  .token.important,
+  .token.variable {
+    @apply text-amber-500;
+  }
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
 }
